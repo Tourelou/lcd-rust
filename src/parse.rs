@@ -3,8 +3,6 @@
 use std::env;
 use crate::locale;
 
-const DEFAUT_LIVRE: &str = "LivreComptable";
-
 #[derive(Debug)]
 pub struct Options {
 	pub locale: locale::LangStrings,
@@ -14,15 +12,20 @@ pub struct Options {
 impl Options {
 	pub fn parse_args(prg_name: &str, version: &str) -> Self {
 		let args: Vec<String> = env::args().skip(1).collect();
+
 		let mut opts = Options {
 			locale: locale::set_lang_vec(),
 			livre_name: None,
 		};
 
+		if args.iter().count() > 1 {
+			eprintln!("{}", opts.locale.err_arguments);
+			std::process::exit(5);
+		}
 		for arg in args.iter() {
 			match arg.as_str() {
-				"-ver" => versions(prg_name, version, opts.locale.ver),
 				"-h" => help(prg_name, opts.locale.usage, 0),
+				"-ver" => versions(prg_name, version, opts.locale.ver),
 				"--help" => help(prg_name, opts.locale.options, 0),
 				"--version" => versions(prg_name, version, opts.locale.ver_desc),
 				_ => {
@@ -32,10 +35,6 @@ impl Options {
 					}
 				}
 			}
-		}
-		// Si aucun nom n’a été fourni, on met la valeur par défaut
-		if opts.livre_name.is_none() {
-			opts.livre_name = Some(DEFAUT_LIVRE.to_string());
 		}
 		opts
 	}
