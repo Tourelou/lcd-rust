@@ -47,6 +47,21 @@ r#"['accounting book file']
                   lcd ./account, account will be saved in the current directory.
                   lcd /home/user/account, account will be saved to that path."#;
 
+const HEADER_FR: &str =
+r#"--------------------------------------------------------
+--- {1}, par Daniel Vaillancourt, version {2} ---
+--------------------------------------------------------"#;
+
+const HEADER_ES: &str =
+r#"--------------------------------------------------------
+--- {1}, por Daniel Vaillancourt, versión {2} ---
+--------------------------------------------------------"#;
+
+const HEADER_EN: &str =
+r#"--------------------------------------------------------
+--- {1},  by Daniel Vaillancourt, version {2} ---
+--------------------------------------------------------"#;
+
 #[derive(Debug)]
 pub struct LangStrings {
 	pub usage: &'static str,
@@ -56,6 +71,8 @@ pub struct LangStrings {
 	pub err_arguments: &'static str,
 	pub err_chdir: &'static str,
 	pub err_is_dir: &'static str,
+	pub header: &'static str,
+	pub new_db: &'static str,
 	pub ouverture: &'static str,
 }
 
@@ -67,6 +84,8 @@ pub const LANG_FR: LangStrings = LangStrings {
 	err_arguments: "Trop d'argument: un seul fichier LivreComptable s.v.p.",
 	err_chdir: "Erreur changement de répertoire vers",
 	err_is_dir: "est un répertoire",
+	header: HEADER_FR,
+	new_db: "n'existe pas. Création d'un nouveau livre ?",
 	ouverture: "Ouverture du livre «{1}» à partir du répertoire «{2}»",
 };
 
@@ -78,6 +97,8 @@ pub const LANG_ES: LangStrings = LangStrings {
 	err_arguments: "Demasiados argumentos: Solo un archivo 'LivreComptable', por favor.",
 	err_chdir: "Error al cambiar el directorio a",
 	err_is_dir: "es un directorio",
+	header: HEADER_ES,
+	new_db: "no existe. ¿Creando un nuevo libro ?",
 	ouverture: "Abriendo el libro «{1}» del directorio «{2}»",
 };
 
@@ -89,6 +110,8 @@ pub const LANG_EN: LangStrings = LangStrings {
 	err_arguments: "Too many arguments: Only one 'LivreComptable' file please.",
 	err_chdir: "Error changing directory to",
 	err_is_dir: "is a directory",
+	header: HEADER_EN,
+	new_db: "does not exist. Creating a new book ?",
 	ouverture: "Opening book «{1}» from directory «{2}»",
 };
 
