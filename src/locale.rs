@@ -54,6 +54,9 @@ pub struct LangStrings {
 	pub ver: &'static str,
 	pub ver_desc: &'static str,
 	pub err_arguments: &'static str,
+	pub err_chdir: &'static str,
+	pub err_is_dir: &'static str,
+	pub ouverture: &'static str,
 }
 
 pub const LANG_FR: LangStrings = LangStrings {
@@ -61,23 +64,32 @@ pub const LANG_FR: LangStrings = LangStrings {
 	options: OPTIONS_FR,
 	ver: ": version",
 	ver_desc: ": Livre comptable en ligne de commande, version",
-	err_arguments: "Trop d'argument: un seul fichier LivreComptable s.v.p."
+	err_arguments: "Trop d'argument: un seul fichier LivreComptable s.v.p.",
+	err_chdir: "Erreur changement de répertoire vers",
+	err_is_dir: "est un répertoire",
+	ouverture: "Ouverture du livre «{1}» à partir du répertoire «{2}»",
 };
 
 pub const LANG_ES: LangStrings = LangStrings {
-    usage: "['Libro de cuentas']",
-    options: OPTIONS_ES,
-    ver: ": versión",
-    ver_desc: ": Libro contable en línea de comandos, versión",
+	usage: "['Libro de cuentas']",
+	options: OPTIONS_ES,
+	ver: ": versión",
+	ver_desc: ": Libro contable en línea de comandos, versión",
 	err_arguments: "Demasiados argumentos: Solo un archivo 'LivreComptable', por favor.",
+	err_chdir: "Error al cambiar el directorio a",
+	err_is_dir: "es un directorio",
+	ouverture: "Abriendo el libro «{1}» del directorio «{2}»",
 };
 
 pub const LANG_EN: LangStrings = LangStrings {
-    usage: "['Accounting book']",
-    options: OPTIONS_EN,
-    ver: ": version",
-    ver_desc: ": Accounting book in command line interface, version",
+	usage: "['Accounting book']",
+	options: OPTIONS_EN,
+	ver: ": version",
+	ver_desc: ": Accounting book in command line interface, version",
 	err_arguments: "Too many arguments: Only one 'LivreComptable' file please.",
+	err_chdir: "Error changing directory to",
+	err_is_dir: "is a directory",
+	ouverture: "Opening book «{1}» from directory «{2}»",
 };
 
 pub fn set_lang_vec() -> LangStrings {
