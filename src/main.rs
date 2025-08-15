@@ -2,30 +2,19 @@
 
 mod parse;
 mod locale;
+mod amj_date;
+mod create_livre;
 
 use std::env;
 use std::path::Path;
 use std::fs::File;
 use std::io::{self, Write, BufRead};
 
-use std::time::{SystemTime, UNIX_EPOCH};
-use time::OffsetDateTime;
-
-use crate::parse::Options;
+use parse::Options;
 
 const DEFAUT_PRGNAME: &str = "lcd";
 const DEFAUT_LIVRE: &str = "LivreComptable";
-const VERSION: &str = "2025-08-14";
-
-fn get_annee() -> String {
-	let now = SystemTime::now()
-						.duration_since(UNIX_EPOCH)
-						.unwrap()
-						.as_secs();
-	let datetime = OffsetDateTime::from_unix_timestamp(now as i64)
-									.unwrap();
-	datetime.year().to_string()
-}
+const VERSION: &str = "2025-08-15";
 
 /// Retourne la largeur du terminal en colonnes.
 /// Si la détection échoue, retourne 0 silencieusement.
@@ -90,7 +79,7 @@ fn main() {
 
 	// Si aucun nom n’a été fourni, on met la valeur par défaut
 	if opts.livre_name.is_none() {
-		opts.livre_name = Some(format!("{}.{}", DEFAUT_LIVRE, get_annee()));
+		opts.livre_name = Some(format!("{}.{}", DEFAUT_LIVRE, amj_date::get_annee()));
 		// CD vers exec_path
 		if let Err(e) = env::set_current_dir(exec_path) {
 			eprintln!("{} {} : {}", opts.locale.err_chdir, exec_path, e);
@@ -156,8 +145,11 @@ fn main() {
 		let lettre = input.trim().chars().next();
 
 		match lettre {
-			Some('n') | Some('N') => println!("On arrête."),
-			_ => println!("Création de db"),
+			Some('n') | Some('N') => println!("OK Bye."),
+			_ => {
+					println!("Création de db");
+					create_livre::create_db(&opts.livre_name.unwrap());
+				},
 		}
 	}
 }
