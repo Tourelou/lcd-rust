@@ -47,6 +47,27 @@ r#"['accounting book file']
                   lcd ./account, account will be saved in the current directory.
                   lcd /home/user/account, account will be saved to that path."#;
 
+const MSG_TERM_112_FR: &str =
+r#"Redimentionnez le terminal.
+
+Un minimum de 112 colonnes sont nécessaire à l'affichage.
+
+Appuyez sur Entrée pour une deuxième chance... "#;
+
+const  MSG_TERM_112_ES: &str =
+r#"Ajusta el tamaño de la terminal.
+
+Se requiere un mínimo de 112 columnas para la visualización.
+
+Presiona Intro para una segunda oportunidad... "#;
+
+const  MSG_TERM_112_EN: &str = 
+r#"Resize the terminal.
+
+A minimum of 112 columns are required for the display.
+
+Press Enter for a second chance... "#;
+
 const HEADER_FR: &str =
 r#"--------------------------------------------------------
 --- {1}, par Daniel Vaillancourt, version {2} ---
@@ -68,6 +89,7 @@ pub struct LangStrings {
 	pub options: &'static str,
 	pub ver: &'static str,
 	pub ver_desc: &'static str,
+	pub term_size: &'static str,
 	pub err_arguments: &'static str,
 	pub err_chdir: &'static str,
 	pub err_is_dir: &'static str,
@@ -81,6 +103,7 @@ pub const LANG_FR: LangStrings = LangStrings {
 	options: OPTIONS_FR,
 	ver: ": version",
 	ver_desc: ": Livre comptable en ligne de commande, version",
+	term_size: MSG_TERM_112_FR,
 	err_arguments: "Trop d'argument: un seul fichier LivreComptable s.v.p.",
 	err_chdir: "Erreur changement de répertoire vers",
 	err_is_dir: "est un répertoire",
@@ -94,6 +117,7 @@ pub const LANG_ES: LangStrings = LangStrings {
 	options: OPTIONS_ES,
 	ver: ": versión",
 	ver_desc: ": Libro contable en línea de comandos, versión",
+	term_size: MSG_TERM_112_ES,
 	err_arguments: "Demasiados argumentos: Solo un archivo 'LivreComptable', por favor.",
 	err_chdir: "Error al cambiar el directorio a",
 	err_is_dir: "es un directorio",
@@ -107,6 +131,7 @@ pub const LANG_EN: LangStrings = LangStrings {
 	options: OPTIONS_EN,
 	ver: ": version",
 	ver_desc: ": Accounting book in command line interface, version",
+	term_size: MSG_TERM_112_EN,
 	err_arguments: "Too many arguments: Only one 'LivreComptable' file please.",
 	err_chdir: "Error changing directory to",
 	err_is_dir: "is a directory",
