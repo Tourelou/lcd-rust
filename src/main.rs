@@ -8,13 +8,14 @@ mod create_livre;
 use std::env;
 use std::path::Path;
 use std::fs::File;
-use std::io::{self, Write, BufRead};
+use std::process::ExitCode;
+use std::io::{self, Read, Write, BufRead, Result};
 
-use parse::Options;
+use parse::VarsApp;
 
 const DEFAUT_PRGNAME: &str = "lcd";
 const DEFAUT_LIVRE: &str = "LivreComptable";
-const VERSION: &str = "2025-08-15";
+const VERSION: &str = "2025-08-18";
 
 /// Retourne la largeur du terminal en colonnes.
 /// Si la détection échoue, retourne 0 silencieusement.
@@ -42,7 +43,7 @@ fn terminal_width() -> usize {
 		.unwrap_or(0)
 }
 
-fn term112cols(vars_prg: &Options) {
+fn term112cols(vars_prg: &VarsApp) -> bool {
 	let mut width = terminal_width();
 
 	if width == 0 {
@@ -54,11 +55,20 @@ fn term112cols(vars_prg: &Options) {
 		let _ = std::io::BufReader::new(io::stdin()).read_line(&mut String::new());
 
 		width = terminal_width();
-		if width < 112 { std::process::exit(100); }
+		if width < 112 { return false; }
 	}
+	return true;
 }
 
-fn main() {
+fn is_sqlite_file(path: &String) -> Result<bool> {
+	let mut file = File::open(path)?;
+	let mut buffer = [0u8; 16];
+	file.read_exact(&mut buffer)?;
+
+	let expected_signature = b"SQLite format 3\0";
+	Ok(&buffer == expected_signature)
+}
+fn main() -> ExitCode {
 	// Récupère le nom et le path de l'exécutable
 	let args: Vec<String> = env::args().collect();
 	let exec_full_path = Path::new(&args[0]);
@@ -70,73 +80,96 @@ fn main() {
 	let exec_path = exec_full_path.parent()
 									.and_then(|p| p.to_str())
 									.unwrap_or(".");
-								
+
 	// Maintenant on parse et manipule le nom du livre
-	let mut opts = parse::Options::parse_args(exec_name, VERSION);
+	let mut var_app = match parse::VarsApp::parse_args(exec_name, VERSION) {
+		parse::ParseResult::Ok(v) => v,
+		parse::ParseResult::ShowHelp(msg) => {
+			println!("{msg}");
+			return ExitCode::SUCCESS;
+		}
+		parse::ParseResult::ShowVersion(msg) => {
+			println!("{msg}");
+			return ExitCode::SUCCESS;
+		}
+		parse::ParseResult::Error(err_msg, usage_msg, code) => {
+			eprintln!("{err_msg}");
+			println!("{usage_msg}");
+			return ExitCode::from(code);
+		}
+	};
 
 	// Teste si nous avons l'espace nécessaire sur le terminal.
-	term112cols(&opts);
+	if ! term112cols(&var_app) { return ExitCode::from(10);}
 
 	// Si aucun nom n’a été fourni, on met la valeur par défaut
-	if opts.livre_name.is_none() {
-		opts.livre_name = Some(format!("{}.{}", DEFAUT_LIVRE, amj_date::get_annee()));
+	if var_app.livre_name.is_none() {
+		var_app.livre_name = Some(format!("{}.{}", DEFAUT_LIVRE, amj_date::get_annee()));
 		// CD vers exec_path
 		if let Err(e) = env::set_current_dir(exec_path) {
-			eprintln!("{} {} : {}", opts.locale.err_chdir, exec_path, e);
-			std::process::exit(5);
+			eprintln!("{} {} : {}", var_app.locale.err_chdir, exec_path, e);
+			return ExitCode::from(5);
 		}
 	}
 	else {	// Ici, on fait avec la valeur fournie
-		let livre_path = Path::new(opts.livre_name
+		let livre_path = Path::new(var_app.livre_name
 									.as_ref()
 									.unwrap());
-		let livre_str = opts.livre_name
+		let livre_str = var_app.livre_name
 									.as_ref()
 									.unwrap();
 		if livre_path.is_dir() {
-			eprintln!("«{}» {}", livre_str, opts.locale.err_is_dir);
-			std::process::exit(10);
+			eprintln!("«{}» {}", livre_str, var_app.locale.err_is_dir);
+			return ExitCode::from(10);
 		}
-		if livre_str.len() < 1 { std::process::exit(100); }	// Gnaisage ""
+		if livre_str.len() < 1 { return ExitCode::from(100); }	// Gnaisage ""
 
 		if livre_str.contains('/') || livre_str.starts_with('.') {
 			// Cas avec chemin
 			if let Some(parent) = livre_path.parent() {
 				if let Err(e) = env::set_current_dir(parent) {
-					eprintln!("{} {} : {}", opts.locale.err_chdir, parent.display(), e);
-					std::process::exit(15);
+					eprintln!("{} {} : {}", var_app.locale.err_chdir, parent.display(), e);
+					return ExitCode::from(15);
 				}
 			}
 			// On garde juste le nom du fichier
 			if let Some(file_name) = livre_path.file_name() {
-				opts.livre_name = Some(file_name
+				var_app.livre_name = Some(file_name
 											.to_string_lossy()
 											.into_owned());
-			} else { std::process::exit(10); }
+			} else { return ExitCode::from(10); }
 		}
 		else {
 			// Pas de chemin → on cd vers exec_path
 			if let Err(e) = env::set_current_dir(exec_path) {
-				eprintln!("{} {} : {}", opts.locale.err_chdir, exec_path, e);
-				std::process::exit(25);
+				eprintln!("{} {} : {}", var_app.locale.err_chdir, exec_path, e);
+				return ExitCode::from(25);
 			}
 		}
 	}
-	let app_work_path = env::current_dir()
-										.unwrap_or_else(|_| std::process::exit(1));
+	let app_work_path = match env::current_dir() {
+		Ok(path) => path,
+		Err(_) => { return ExitCode::from(1); }
+	};
+
 	// À partir d'ici, on a toutes les pièces pour démarrer
-	println!("{}", opts.locale.header.replace("{1}", exec_name)
+	println!("{}", var_app.locale.header.replace("{1}", exec_name)
 										.replace("{2}", VERSION));
 
 	// Est-ce que opts.livre_name existe déjà ?
-	let livre_name = opts.livre_name.as_ref().unwrap();
+	let livre_name = var_app.livre_name.as_ref().unwrap();
 	if std::path::Path::new(livre_name).exists() {
-		println!("{}", opts.locale.ouverture.replace("{1}", livre_name)
+		println!("{}", var_app.locale.ouverture.replace("{1}", livre_name)
 											.replace("{2}", app_work_path.to_str().unwrap()));
 		// Ici on passe le nom à sqlite3
+		match is_sqlite_file(&var_app.livre_name.unwrap()) {
+			Ok(true) => println!("Le fichier est une base de données SQLite."),
+			Ok(false) => println!("Le fichier n'est pas une base SQLite."),
+			Err(e) => eprintln!("Erreur lors de la lecture du fichier : {}", e),
+		}
 	}
 	else {
-		print!("«{}/{}» {} ",app_work_path.display(), livre_name, opts.locale.new_db);
+		print!("«{}/{}» {} ",app_work_path.display(), livre_name, var_app.locale.new_db);
 		io::stdout().flush().unwrap(); // Force l'affichage immédiat
 
 		let mut input = String::new();
@@ -148,8 +181,12 @@ fn main() {
 			Some('n') | Some('N') => println!("OK Bye."),
 			_ => {
 					println!("Création de db");
-					create_livre::create_db(&opts.livre_name.unwrap());
+					match create_livre::create_db(&var_app.livre_name.unwrap()) {
+						Ok(_) => println!("Base initialisée avec succès."),
+						Err(msg) => eprintln!("Échec : {}", msg),
+					}
 				},
 		}
 	}
+	ExitCode::SUCCESS
 }

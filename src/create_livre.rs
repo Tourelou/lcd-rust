@@ -1,19 +1,13 @@
+// create_livre.rs
+
 use rusqlite::{params, Connection};
 
-pub fn create_db(db_name: &String) {
+pub fn create_db(db_name: &String) -> Result<Connection, String> {
 	// Tentative d'ouverture de la base
-	let conn = match Connection::open(db_name) {
-		Ok(c) => {
-			println!("Base ouverte avec succès.");
-			c
-		}
-		Err(e) => {
-			eprintln!("Échec d'ouverture de la base : {}", e);
-			return;
-		}
-	};
+	let conn = Connection::open(db_name)
+		.map_err(|e| format!("Erreur lors de l'ouverture de la base : {}", e))?;
 
-	if let Err(e) = conn.execute(
+	conn.execute(
 		"CREATE TABLE IF NOT EXISTS Master (
 			Nom     TEXT,
 			Ref     TEXT,
@@ -22,24 +16,18 @@ pub fn create_db(db_name: &String) {
 			Présent INT
 		)",
 		[],
-	) {
-		eprintln!("Échec de création de la table Master : {}", e);
-		return;
-	}
+	).map_err(|e| format!("Erreur lors de la création de la table Master : {}", e))?;
 
-	if let Err(e) = conn.execute(
+	conn.execute(
 		"CREATE TABLE IF NOT EXISTS Catégories (
 			Nom TEXT,
 			Utilisé INT,
 			Type TEXT
 		)",
 		[],
-	) {
-		eprintln!("Échec de création de la table Catégories : {}", e);
-		return;
-	}
+	).map_err(|e| format!("Erreur lors de la création de la table Catégories : {}", e))?;
 
-	if let Err(e) = conn.execute(
+	conn.execute(
 		"CREATE TABLE IF NOT EXISTS Transactions (
 			Date TEXT,
 			Description TEXT,
@@ -49,12 +37,9 @@ pub fn create_db(db_name: &String) {
 			Montant INT
 		)",
 		[],
-	) {
-		eprintln!("Échec de création de la table Transactions : {}", e);
-		return;
-	}
+	).map_err(|e| format!("Erreur lors de la création de la table Transactions : {}", e))?;
 
-	if let Err(e) = conn.execute(
+	conn.execute(
 		"CREATE TABLE IF NOT EXISTS Favorites (
 			Date TEXT,
 			Description TEXT,
@@ -64,48 +49,13 @@ pub fn create_db(db_name: &String) {
 			Montant INT
 		)",
 		[],
-	) {
-		eprintln!("Échec de création de la table Favorites : {}", e);
-		return;
-	}
+	).map_err(|e| format!("Erreur lors de la création de la table Favorites : {}", e))?;
 
-	// Test insertion
-	match conn.execute(
+
+	conn.execute(
 		"INSERT INTO Catégories (Nom, Utilisé, Type) VALUES (?1, ?2, ?3)",
 		params!["Travail", 5, "Débit"],
-	) {
-		Ok(_) => println!("Insertion réussie pour Travail"),
-		Err(e) => eprintln!("Échec d'insertion pour Travail : {}", e),
-	}
-	
-	// Lecture des données
-	let mut stmt = match conn.prepare("SELECT * FROM Catégories") {
-		Ok(s) => s,
-		Err(e) => {
-			eprintln!("Échec de préparation de la requête SELECT : {}", e);
-			return;
-		}
-	};
+	).map_err(|e| format!("Erreur lors de l'insertion dans la catégorie : {}", e))?;
 
-	let categories = match stmt.query_map([], |row| {
-		Ok((
-			row.get::<_, String>(0)?,
-			row.get::<_, i32>(1)?,
-			row.get::<_, String>(2)?,
-		))
-	}) {
-		Ok(p) => p,
-		Err(e) => {
-			eprintln!("Échec de lecture des données : {}", e);
-			return;
-		}
-	};
-
-	println!("Liste des catégories :");
-	for categorie in categories {
-		match categorie {
-			Ok((nom, utilise, types)) => println!("Nom: {}, Utilisé: {}, Type: {}", nom, utilise, types),
-			Err(e) => eprintln!("Erreur lors de la lecture d'une ligne : {}", e),
-		}
-	}
+	Ok(conn)
 }
