@@ -3,7 +3,10 @@
 mod parse;
 mod locale;
 mod amj_date;
-mod create_livre;
+
+mod lc_libs;
+
+use lc_libs::LivreComptable;
 
 use std::env;
 use std::path::Path;
@@ -15,7 +18,7 @@ use parse::VarsApp;
 
 const DEFAUT_PRGNAME: &str = "lcd";
 const DEFAUT_LIVRE: &str = "LivreComptable";
-const VERSION: &str = "2025-08-18";
+const VERSION: &str = "2025-08-19";
 
 /// Retourne la largeur du terminal en colonnes.
 /// Si la détection échoue, retourne 0 silencieusement.
@@ -181,8 +184,14 @@ fn main() -> ExitCode {
 			Some('n') | Some('N') => println!("OK Bye."),
 			_ => {
 					println!("Création de db");
-					match create_livre::create_db(&var_app.livre_name.unwrap()) {
-						Ok(_) => println!("Base initialisée avec succès."),
+					match LivreComptable::create_db(&var_app.livre_name.unwrap()) {
+						Ok(c) => {
+							println!("Base initialisée avec succès.");
+							match LivreComptable::read_db(c) {
+								Ok(_) => println!("Exécution parfaite"),
+								Err(e) => println!("Malheureusement {e}"),
+							}
+						},
 						Err(msg) => eprintln!("Échec : {}", msg),
 					}
 				},
