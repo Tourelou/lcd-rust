@@ -10,7 +10,7 @@ fn get_datetime() -> OffsetDateTime {
 						.as_secs();
 	OffsetDateTime::from_unix_timestamp(now as i64).unwrap()
 }
-#[allow(dead_code)]
+
 pub fn get_date() -> String {
 	get_datetime().date().to_string()
 }
