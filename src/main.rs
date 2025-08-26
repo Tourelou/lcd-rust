@@ -5,7 +5,6 @@ mod locale;
 mod amj_date;
 
 mod lc_libs;
-
 use lc_libs::LivreComptable;
 
 use std::env;
@@ -18,7 +17,7 @@ use parse::VarsApp;
 
 const DEFAUT_PRGNAME: &str = "lcd";
 const DEFAUT_LIVRE: &str = "LivreComptable";
-const VERSION: &str = "2025-08-21";
+const VERSION: &str = "2025-08-24";
 
 /// Retourne la largeur du terminal en colonnes.
 /// Si la détection échoue, retourne 0 silencieusement.
@@ -128,7 +127,7 @@ fn main() -> ExitCode {
 		if livre_str.len() < 1 { return ExitCode::from(100); }	// Gnaisage ""
 
 		if livre_str.contains('/') || livre_str.starts_with('.') {
-			// Cas avec chemin
+			// Cas avec chemin relatif ou absolu
 			if let Some(parent) = livre_path.parent() {
 				if let Err(e) = env::set_current_dir(parent) {
 					eprintln!("{} {} : {}", var_app.locale.err_chdir, parent.display(), e);
@@ -165,8 +164,15 @@ fn main() -> ExitCode {
 		println!("{}", var_app.locale.ouverture.replace("{1}", livre_name)
 											.replace("{2}", app_work_path.to_str().unwrap()));
 		// Ici on passe le nom à sqlite3
-		match is_sqlite_file(&var_app.livre_name.unwrap()) {
-			Ok(true) => println!("Le fichier est une base de données SQLite."),
+		match is_sqlite_file(&var_app.livre_name.clone().unwrap()) {
+			Ok(true) => {
+				match LivreComptable::open_db(&var_app, false) {
+					Ok(_) => {
+						println!("Base ouverte.");
+					},
+					Err(msg) => eprintln!("Échec : {}", msg),
+				};
+			}
 			Ok(false) => println!("Le fichier n'est pas une base SQLite."),
 			Err(e) => eprintln!("Erreur lors de la lecture du fichier : {}", e),
 		}
@@ -184,14 +190,8 @@ fn main() -> ExitCode {
 			Some('n') | Some('N') => println!("OK Bye."),
 			_ => {
 					println!("Création de db");
-					match LivreComptable::create_db(&var_app.livre_name.unwrap()) {
-						Ok(c) => {
-							println!("Base initialisée avec succès.");
-							match LivreComptable::read_db(c) {
-								Ok(_) => println!("Exécution parfaite"),
-								Err(e) => println!("Malheureusement {e}"),
-							}
-						},
+					match LivreComptable::open_db(&var_app, true) {
+						Ok(_) => println!("Base créée."),
 						Err(msg) => eprintln!("Échec : {}", msg),
 					}
 				},

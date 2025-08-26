@@ -1,2 +1,4 @@
 target/
 Cargo.lock
+base.db
+.DS_Store

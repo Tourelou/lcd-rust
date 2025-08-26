@@ -1,46 +1,47 @@
 // mod.rs
 
-use  rusqlite::{self, Connection};
 use crate::amj_date::get_date;
+use crate::lc_libs::wrapper_sqlite3::Connection;
 
 #[allow(dead_code)]
-	struct Compte {
-		nom: String,
-		cmpt_ref: String,
-		cmpt_type: String,	// Courant, Épargne, Crédit
-		depart: String,
-		present: String,
+	pub struct Compte {
+		pub nom: String,
+		pub cmpt_ref: String,
+		pub cmpt_type: String,	// Courant, Épargne, Crédit
+		pub depart: i64,	// En cents
+		pub present: i64,	// En cents
 	}
 	/*
 	┌────┬──────────────────────────────────┬──────────────┐┌────┬──────────────────────────────────┬──────────────┐
 	│  1 │ Compte #1                        │ $    2240,98 ││  2 │ Compte #2                        │ $    3490,88 │
-	└────┤ -                                │ $    2240,98 │└────┤ -                                │ $    3490,88 │
+	└────┤ No de référence 1                │ $    2240,98 │└────┤ No de référence 2.               │ $    3490,88 │
 		 └──────────────────────────────────┴──────────────┘     └──────────────────────────────────┴──────────────┘
 	*/
 
 #[allow(dead_code)]
-	struct Categorie {
-		nom: String,
-		utilise: u16,
-		cat_type: String,	// IN, OUT, Courant, Épargne, Crédit
+#[derive(Debug)]
+	pub struct Categorie {
+		pub nom: String,
+		pub utilise: u16,
+		pub cat_type: String,	// IN, OUT, Courant, Épargne, Crédit
 	}
 	/*
 	┌────┬───────────────────────────┐┌────┬───────────────────────────┐┌────┬───────────────────────────┐
-	│  1 │ Compte #1                 ││  2 │ Compte #2                 ││  3 │ Carte de crédit           │
+	│  1 │ Compte #1                 ││  2 │ Compte #2                 ││  3 │ Carte de crédit #1        │
 	└────┴───────────────────────────┘└────┴───────────────────────────┘└────┴───────────────────────────┘
 	*/
 #[allow(dead_code)]
-	struct Transaction {
-		date: String,	// Sous forme: 2024-03-24
-		description: String,
-		t_type: String,	// Dépôt, Débit, Crédit, Achat, Virement, Paiement
-		compte: String,
-		catégorie: String,	// Nom de la catégorie
-		montant: i64,	// En cents
+	pub struct Transaction {
+		pub date: String,	// Sous forme: 2024-03-24
+		pub description: String,
+		pub t_type: String,	// Dépôt, Débit, Crédit, Achat, Virement, Paiement
+		pub compte: String,
+		pub categorie: String,	// Nom de la catégorie
+		pub montant: i64,	// En cents
 	}
 	/*
 	┌────────────┬────────────────────────────────┬─────────────┬─────────────────────────────────────────┐
-	│ 2024-05-31 │ Hypothèque                     │ Débit       │   De: Compte #2                         │
+	│ 2024-05-31 │ Hypothèque                     │ Débit       │   De: Compte #1                         │
 	└────────────┤                                │ $    234,56 │ Vers: Hypothèque                        │
 				 └────────────────────────────────┴─────────────┴─────────────────────────────────────────┘
 	*/
@@ -48,20 +49,20 @@ use crate::amj_date::get_date;
 #[allow(dead_code)]
 #[allow(non_snake_case)]
 pub struct LivreComptable {
-	bd: rusqlite::Connection,
-	d: String,	// Date
-	line_read: Option<String>,
-	COMPTES: Vec<Compte>,
-	CATEGORIES: Vec<Categorie>,
-	TRANSACTIONS: Vec<Transaction>,
-	FAV_FAVORITES: Vec<Transaction>,
+	pub bd: Connection,
+	pub d: String,	// Date
+	pub line_read: Option<String>,
+	pub COMPTES: Vec<Compte>,
+	pub CATEGORIES: Vec<Categorie>,
+	pub TRANSACTIONS: Vec<Transaction>,
+	pub FAV_FAVORITES: Vec<Transaction>,
 /*
 	Des vecteurs temporaires dépendant du type demandé
 	Important de faire clear avant usage
 */
-	TMP_COMPTES: Vec<Compte>,
-	TMP_CATEGORIES: Vec<Categorie>,
-	TMP_TRANSACTIONS: Vec<Transaction>,
+	pub TMP_COMPTES: Vec<Compte>,
+	pub TMP_CATEGORIES: Vec<Categorie>,
+	pub TMP_TRANSACTIONS: Vec<Transaction>,
 /*
 	Type de transaction: Dépôt, Débit, Crédit, Achat, Virement, Paiement
 	Les deux derniers impliquent une double transaction en une seule ligne.
@@ -86,7 +87,7 @@ pub struct LivreComptable {
 }
 #[allow(dead_code)]
 impl LivreComptable {
-	pub fn new(nom_bd: &String) -> Result<Self, rusqlite::Error> {
+	pub fn new(nom_bd: &String) -> Result<Self, String> {
 		Ok(LivreComptable {
 			bd: Connection::open(nom_bd)?,
 			d: get_date(),
@@ -102,7 +103,8 @@ impl LivreComptable {
 	}
 }
 
-pub mod create_livre;
+pub mod wrapper_sqlite3;
+pub mod ouvre_livre;
 
 /*
 // lc_initLivre.cpp
