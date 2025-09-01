@@ -1,9 +1,10 @@
 // mod.rs
 
-use crate::amj_date::get_date;
 use crate::lc_libs::wrapper_sqlite3::Connection;
+use crate::lc_libs::wrapper_readline::Readline;
 
 #[allow(dead_code)]
+#[derive(Debug)]
 	pub struct Compte {
 		pub nom: String,
 		pub cmpt_ref: String,
@@ -12,10 +13,10 @@ use crate::lc_libs::wrapper_sqlite3::Connection;
 		pub present: i64,	// En cents
 	}
 	/*
-	┌────┬──────────────────────────────────┬──────────────┐┌────┬──────────────────────────────────┬──────────────┐
+	╭────┬──────────────────────────────────┬──────────────╮╭────┬──────────────────────────────────┬──────────────╮
 	│  1 │ Compte #1                        │ $    2240,98 ││  2 │ Compte #2                        │ $    3490,88 │
-	└────┤ No de référence 1                │ $    2240,98 │└────┤ No de référence 2.               │ $    3490,88 │
-		 └──────────────────────────────────┴──────────────┘     └──────────────────────────────────┴──────────────┘
+	╰────┤ No de référence 1                │ $    2240,98 │╰────┤ No de référence 2.               │ $    3490,88 │
+	     ╰──────────────────────────────────┴──────────────╯     ╰──────────────────────────────────┴──────────────╯
 	*/
 
 #[allow(dead_code)]
@@ -26,9 +27,9 @@ use crate::lc_libs::wrapper_sqlite3::Connection;
 		pub cat_type: String,	// IN, OUT, Courant, Épargne, Crédit
 	}
 	/*
-	┌────┬───────────────────────────┐┌────┬───────────────────────────┐┌────┬───────────────────────────┐
+	╭────┬───────────────────────────╮╭────┬───────────────────────────╮╭────┬───────────────────────────╮
 	│  1 │ Compte #1                 ││  2 │ Compte #2                 ││  3 │ Carte de crédit #1        │
-	└────┴───────────────────────────┘└────┴───────────────────────────┘└────┴───────────────────────────┘
+	╰────┴───────────────────────────╯╰────┴───────────────────────────╯╰────┴───────────────────────────╯
 	*/
 #[allow(dead_code)]
 	pub struct Transaction {
@@ -40,22 +41,21 @@ use crate::lc_libs::wrapper_sqlite3::Connection;
 		pub montant: i64,	// En cents
 	}
 	/*
-	┌────────────┬────────────────────────────────┬─────────────┬─────────────────────────────────────────┐
+	╭────────────┬────────────────────────────────┬─────────────┬─────────────────────────────────────────╮
 	│ 2024-05-31 │ Hypothèque                     │ Débit       │   De: Compte #1                         │
-	└────────────┤                                │ $    234,56 │ Vers: Hypothèque                        │
-				 └────────────────────────────────┴─────────────┴─────────────────────────────────────────┘
+	╰────────────┤                                │ $    234,56 │ Vers: Hypothèque                        │
+				 ╰────────────────────────────────┴─────────────┴─────────────────────────────────────────╯
 	*/
 
 #[allow(dead_code)]
 #[allow(non_snake_case)]
-pub struct LivreComptable {
+pub struct LivreComptable {				// ouvre_livre.rs instancie LivreComptable
 	pub bd: Connection,
-	pub d: String,	// Date
-	pub line_read: Option<String>,
+	pub readline_inst: Readline,
 	pub COMPTES: Vec<Compte>,
 	pub CATEGORIES: Vec<Categorie>,
 	pub TRANSACTIONS: Vec<Transaction>,
-	pub FAV_FAVORITES: Vec<Transaction>,
+	pub FAVORITES: Vec<Transaction>,
 /*
 	Des vecteurs temporaires dépendant du type demandé
 	Important de faire clear avant usage
@@ -90,12 +90,11 @@ impl LivreComptable {
 	pub fn new(nom_bd: &String) -> Result<Self, String> {
 		Ok(LivreComptable {
 			bd: Connection::open(nom_bd)?,
-			d: get_date(),
-			line_read: None,
+			readline_inst: Readline::new(),
 			COMPTES: Vec::new(),
 			CATEGORIES: Vec::new(),
 			TRANSACTIONS: Vec::new(),
-			FAV_FAVORITES: Vec::new(),
+			FAVORITES: Vec::new(),
 			TMP_COMPTES: Vec::new(),
 			TMP_CATEGORIES: Vec::new(),
 			TMP_TRANSACTIONS: Vec::new(),
@@ -104,9 +103,24 @@ impl LivreComptable {
 }
 
 pub mod wrapper_sqlite3;
+pub mod wrapper_readline;
 pub mod ouvre_livre;
+pub mod ajoute;
+pub mod lc_utils;
 
 /*
+### main.rs, parse.rs, locale.rs et amj_date.rs
+
+!!!!!! lc_libs/mod.rs: Définie les structs et initialise LivreComptable.
+!!!!!! wrapper_readline.rs, wrapper_sqlite3.rs: Essentiels pour interragir
+
+### lc_libs/ouvre_livre.rs: Créé ou transfert data de la bd vers la mémoire.
+
+### lc_libs/ajoute.rs: Sert à ouvre_livre.rs et le menu principal pour
+                       initialiser nouveaux Compte et/ou Catégorie
+
+
+
 // lc_initLivre.cpp
 	bool initLivre();
 	void incantationSQL(std::string, std::string);
@@ -116,6 +130,11 @@ pub mod ouvre_livre;
 	bool testMontant(std::string &);
 	std::string dollars2cents(const std::string &);	// Convert dollars to cents
 	std::string cents2dollars(const std::string &);	// Convert cents to dollars
+
+	bool sortTransDateAsc(transaction, transaction);
+	bool sortTransDateDesc(transaction, transaction); 
+
+	bool getReponse(const int);
 
 // lc_publish.cpp
 	void publishTransaction(struct transaction&);
@@ -168,10 +187,4 @@ pub mod ouvre_livre;
 
 // lc_nouvelle_trans.cpp
 	bool nouvelleTransaction(bool = false);
-
-// lc_utils.cpp
-bool sortTransDateAsc(transaction, transaction);
-bool sortTransDateDesc(transaction, transaction); 
-
-bool getReponse(const int);
 */

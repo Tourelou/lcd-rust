@@ -1,0 +1,51 @@
+Salut 👋! Voici une liste de pays où l’on parle **français**, **anglais** ou **espagnol**,
+avec leur **symbole de devise** et leur **code de locale** (format ISO comme  fr_CA ).
+
+J’ai sélectionné des exemples représentatifs pour chaque langue :
+
+---
+
+### 🌍 Pays francophones
+
+| Pays              | Devise (symbole)    | Code locale |
+|-------------------|---------------------|-------------|
+| France            | Euro (€)            |  fr_FR      |
+| Canada (Québec)   | Dollar canadien ($) |  fr_CA      |
+| Belgique          | Euro (€)            |  fr_BE      |
+| Suisse            | Franc suisse (CHF)  |  fr_CH      |
+| Sénégal           | Franc CFA (XOF)     |  fr_SN      |
+| Côte d’Ivoire     | Franc CFA (XOF)     |  fr_CI      |
+| Cameroun          | Franc CFA (XAF)     |  fr_CM      |
+
+---
+
+### 🌎 Pays anglophones
+
+| Pays              | Devise (symbole)       | Code locale |
+|-------------------|------------------------|-------------|
+| États-Unis        | Dollar américain ($)   |  en_US      |
+| Canada            | Dollar canadien ($)    |  en_CA      |
+| Royaume Uni       | Livre sterling (£)     |  en_GB      |
+| Australie         | Dollar australien (A$) |  en_AU      |
+| Nigeria           | Naira (₦)              |  en_NG      |
+| Afrique du Sud    | Rand (R)               |  en_ZA      |
+| Inde              | Roupie indienne (₹)    |  en_IN      |
+
+---
+
+### 🌐 Pays hispanophones
+
+| Pays              | Devise (symbole)     | Code locale |
+|-------------------|----------------------|-------------|
+| Espagne           | Euro (€)             |  es_ES      |
+| Mexique           | Peso mexicain (MX$)  |  es_MX      |
+| Argentine         | Peso argentin (ARS)  |  es_AR      |
+| Colombie          | Peso colombien (COP) |  es_CO      |
+| Chili             | Peso chilien (CLP)   |  es_CL      |
+| Pérou             | Sol (PEN)            |  es_PE      |
+
+---
+
+💡 **Remarque** : Le code de locale est souvent utilisé pour adapter les formats de date,
+de devise, et de langue dans les logiciels. Il combine la langue ( fr ,  en ,  es ) et
+le pays ( CA ,  FR ,  MX , etc.).

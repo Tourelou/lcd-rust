@@ -2,15 +2,18 @@
 
 use std::env;
 use crate::locale;
+use crate::amj_date::AMJDate;
 
 pub enum ParseResult {
 	Ok(VarsApp),
 	ShowHelp(String),			// message localisé
 	ShowVersion(String),		// message localisé
 	Error(String, String, u8),	// erreur + usage localisé + code
+	SystemError(),
 }
-#[derive(Debug)]
+// #[derive(Debug)]
 pub struct VarsApp {
+	pub date: AMJDate,
 	pub locale: locale::LangStrings,
 	pub livre_name: Option<String>,
 }
@@ -19,8 +22,15 @@ impl VarsApp {
 	pub fn parse_args(prg_name: &str, version: &str) -> ParseResult {
 		let args: Vec<String> = env::args().skip(1).collect();
 
+		let locale = locale::set_lang_vec();
+		let date = match AMJDate::new(&locale) {
+			Some(s) => s,
+			None => return ParseResult::SystemError(),
+		};
+
 		let mut opts = VarsApp {
-			locale: locale::set_lang_vec(),
+			locale,
+			date,
 			livre_name: None,
 		};
 

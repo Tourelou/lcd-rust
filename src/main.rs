@@ -15,9 +15,11 @@ use std::io::{self, Read, Write, BufRead, Result};
 
 use parse::VarsApp;
 
+use crate::amj_date::AMJDate;
+
 const DEFAUT_PRGNAME: &str = "lcd";
 const DEFAUT_LIVRE: &str = "LivreComptable";
-const VERSION: &str = "2025-08-24";
+const VERSION: &str = "2025-08-29";
 
 /// Retourne la largeur du terminal en colonnes.
 /// Si la détection échoue, retourne 0 silencieusement.
@@ -70,7 +72,14 @@ fn is_sqlite_file(path: &String) -> Result<bool> {
 	let expected_signature = b"SQLite format 3\0";
 	Ok(&buffer == expected_signature)
 }
+
+fn get_annee(date: &AMJDate) -> String {
+	println!("{date}");
+	date.aujourdhui[0..4].to_string()
+}
+
 fn main() -> ExitCode {
+// ############################################################################
 	// Récupère le nom et le path de l'exécutable
 	let args: Vec<String> = env::args().collect();
 	let exec_full_path = Path::new(&args[0]);
@@ -83,7 +92,9 @@ fn main() -> ExitCode {
 									.and_then(|p| p.to_str())
 									.unwrap_or(".");
 
+// ############################################################################
 	// Maintenant on parse et manipule le nom du livre
+	// parse_args set la date, la locale et via CLI le nom du fichier
 	let mut var_app = match parse::VarsApp::parse_args(exec_name, VERSION) {
 		parse::ParseResult::Ok(v) => v,
 		parse::ParseResult::ShowHelp(msg) => {
@@ -99,21 +110,25 @@ fn main() -> ExitCode {
 			println!("{usage_msg}");
 			return ExitCode::from(code);
 		}
+		parse::ParseResult::SystemError() => { return ExitCode::from(50); }
 	};
 
+// ############################################################################
 	// Teste si nous avons l'espace nécessaire sur le terminal.
 	if ! term112cols(&var_app) { return ExitCode::from(10);}
 
+// ############################################################################
 	// Si aucun nom n’a été fourni, on met la valeur par défaut
 	if var_app.livre_name.is_none() {
-		var_app.livre_name = Some(format!("{}.{}", DEFAUT_LIVRE, amj_date::get_annee()));
+		var_app.livre_name = Some(format!("{}.{}", DEFAUT_LIVRE, get_annee(&var_app.date)));
 		// CD vers exec_path
 		if let Err(e) = env::set_current_dir(exec_path) {
 			eprintln!("{} {} : {}", var_app.locale.err_chdir, exec_path, e);
 			return ExitCode::from(5);
 		}
 	}
-	else {	// Ici, on fait avec la valeur fournie
+	// Ici, on fait les tests avec la valeur fournie
+	else {
 		let livre_path = Path::new(var_app.livre_name
 									.as_ref()
 									.unwrap());
@@ -154,10 +169,12 @@ fn main() -> ExitCode {
 		Err(_) => { return ExitCode::from(1); }
 	};
 
+// ############################################################################
 	// À partir d'ici, on a toutes les pièces pour démarrer
 	println!("{}", var_app.locale.header.replace("{1}", exec_name)
 										.replace("{2}", VERSION));
 
+// ############################################################################
 	// Est-ce que opts.livre_name existe déjà ?
 	let livre_name = var_app.livre_name.as_ref().unwrap();
 	if std::path::Path::new(livre_name).exists() {
@@ -167,16 +184,15 @@ fn main() -> ExitCode {
 		match is_sqlite_file(&var_app.livre_name.clone().unwrap()) {
 			Ok(true) => {
 				match LivreComptable::open_db(&var_app, false) {
-					Ok(_) => {
-						println!("Base ouverte.");
-					},
-					Err(msg) => eprintln!("Échec : {}", msg),
+					Ok(()) => {},
+					Err(msg) => eprintln!("{} {}", var_app.locale.err_echec, msg),
 				};
 			}
-			Ok(false) => println!("Le fichier n'est pas une base SQLite."),
-			Err(e) => eprintln!("Erreur lors de la lecture du fichier : {}", e),
+			Ok(false) => println!("{}", var_app.locale.err_not_sqlite3),
+			Err(e) => eprintln!("{} {}", var_app.locale.err_read_file, e),
 		}
 	}
+	// Ici le livre n'existe pas
 	else {
 		print!("«{}/{}» {} ",app_work_path.display(), livre_name, var_app.locale.new_db);
 		io::stdout().flush().unwrap(); // Force l'affichage immédiat
@@ -188,11 +204,9 @@ fn main() -> ExitCode {
 
 		match lettre {
 			Some('n') | Some('N') => println!("OK Bye."),
-			_ => {
-					println!("Création de db");
-					match LivreComptable::open_db(&var_app, true) {
-						Ok(_) => println!("Base créée."),
-						Err(msg) => eprintln!("Échec : {}", msg),
+			_ => {	match LivreComptable::open_db(&var_app, true) {
+						Ok(()) => {},
+						Err(msg) => eprintln!("{} {}", var_app.locale.err_echec, msg),
 					}
 				},
 		}

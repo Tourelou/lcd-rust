@@ -1,0 +1,20 @@
+╭─ Updating Package List ──┬────╮
+│No Change:                │    │
+│Updated:                  │    │
+│Updated:                  │    │
+│Ignored:                  │    │
+│No Change:                │    │
+│No Change:                │    │
+│Updated:                  │    │
+│Fetched                   │    │
+╰──────────────────────────┴────╯
+     ╭─ Updating Package List ──┬────╮
+ ╭───╯ No Change:               │    │
+ │ 1   Updated:                 │    │
+ ╰───╮ Updated:                 │    │
+     │ Ignored:                 │    │
+     │ No Change:               │    │
+     │ No Change:               │    │
+     │ Updated:                 │    │
+     │ Fetched                  │    │
+     ╰──────────────────────────┴────╯
