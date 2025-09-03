@@ -1,15 +1,13 @@
 // ajoute.rs
 
-use crate::{lc_libs::{wrapper_readline::Readline,
-						Categorie, Compte,
-						lc_utils::string_2_cent},
+use crate::{lc_libs::{ajoute_locale, lc_utils::string_2_cent, wrapper_readline::Readline, Categorie, Compte},
 				parse::VarsApp};
 
 use super::LivreComptable;
 use std::io::{self, Read, Write};
 use std::process::Command;
 
-fn enable_raw_mode() {
+pub fn enable_raw_mode() {
 	// Sauvegarde les paramètres actuels du terminal
 	Command::new("stty")
 		.arg("-echo")
@@ -18,7 +16,7 @@ fn enable_raw_mode() {
 		.expect("Échec de l'activation du mode brut");
 }
 
-fn disable_raw_mode() {
+pub fn disable_raw_mode() {
 	// Restaure les paramètres du terminal
 	Command::new("stty")
 		.arg("echo")
@@ -97,26 +95,27 @@ fn get_menu(chaine: &str, index: u8) -> Option<String>{
 #[allow(unused)]
 impl LivreComptable {
 	pub fn ajoute_compte(&self, var_app: &VarsApp) -> Option<Compte> {
+		let language = ajoute_locale::set_ajoute_lang(&var_app);
 
 		let mut rl = Readline::new();
-		let nom = match rl.read_line(format!("{}", var_app.locale.nom_compte).as_str(), false) {
+		let nom = match rl.read_line(format!("{}", language.nom_compte).as_str(), false) {
 			Some(line) => line,
 			None => return None,
 		};
 		if nom == "" { return None; }
 
-		let cmpt_ref = match rl.read_line(format!("{}", var_app.locale.ref_compte).as_str(), false) {
+		let cmpt_ref = match rl.read_line(format!("{}", language.ref_compte).as_str(), false) {
 			Some(line) => line,
 			None => return None,
 		};
 		if cmpt_ref == "" { return None; }
 
-		let cmpt_type = match get_menu(var_app.locale.type_compte, 0) {
+		let cmpt_type = match get_menu(language.type_compte, 0) {
 			Some(line) => line,
 			None => return None,
 		};
 
-		let depart_string = match rl.read_line(format!("{}", var_app.locale.depart_compte).as_str(), false) {
+		let depart_string = match rl.read_line(format!("{}", language.depart_compte).as_str(), false) {
 			Some(line) => line,
 			None => return None,
 		};
@@ -138,15 +137,16 @@ impl LivreComptable {
 	}
 
 	pub fn ajoute_categorie(&self, var_app: &VarsApp) -> Option<Categorie> {
+		let language = ajoute_locale::set_ajoute_lang(&var_app);
 
 		let mut rl = Readline::new();
-		let nom = match rl.read_line(format!("{}", var_app.locale.nom_categorie).as_str(), false) {
+		let nom = match rl.read_line(format!("{}", language.nom_categorie).as_str(), false) {
 			Some(line) => line,
 			None => return None,
 		};
 		if nom == "" { return None; }
 
-		let cat_type = match get_menu(var_app.locale.type_categorie, 1) {
+		let cat_type = match get_menu(language.type_categorie, 1) {
 			Some(line) => line,
 			None => return None,
 		};

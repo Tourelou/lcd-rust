@@ -11,9 +11,12 @@ pub enum ParseResult {
 	Error(String, String, u8),	// erreur + usage localisé + code
 	SystemError(),
 }
+
+#[allow(unused)]
 // #[derive(Debug)]
 pub struct VarsApp {
 	pub date: AMJDate,
+	pub loc_string: String,
 	pub locale: locale::LangStrings,
 	pub livre_name: Option<String>,
 }
@@ -22,13 +25,14 @@ impl VarsApp {
 	pub fn parse_args(prg_name: &str, version: &str) -> ParseResult {
 		let args: Vec<String> = env::args().skip(1).collect();
 
-		let locale = locale::set_lang_vec();
+		let (loc_string, locale) = locale::set_lang_vec();
 		let date = match AMJDate::new(&locale) {
 			Some(s) => s,
 			None => return ParseResult::SystemError(),
 		};
 
 		let mut opts = VarsApp {
+			loc_string,
 			locale,
 			date,
 			livre_name: None,

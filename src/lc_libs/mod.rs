@@ -1,5 +1,8 @@
 // mod.rs
 
+use std::collections::HashMap;
+use std::env;
+
 use crate::lc_libs::wrapper_sqlite3::Connection;
 use crate::lc_libs::wrapper_readline::Readline;
 
@@ -51,6 +54,7 @@ use crate::lc_libs::wrapper_readline::Readline;
 #[allow(non_snake_case)]
 pub struct LivreComptable {				// ouvre_livre.rs instancie LivreComptable
 	pub bd: Connection,
+	pub symbole_monaie: String,
 	pub readline_inst: Readline,
 	pub COMPTES: Vec<Compte>,
 	pub CATEGORIES: Vec<Categorie>,
@@ -90,6 +94,7 @@ impl LivreComptable {
 	pub fn new(nom_bd: &String) -> Result<Self, String> {
 		Ok(LivreComptable {
 			bd: Connection::open(nom_bd)?,
+			symbole_monaie: get_monaie(),
 			readline_inst: Readline::new(),
 			COMPTES: Vec::new(),
 			CATEGORIES: Vec::new(),
@@ -102,10 +107,40 @@ impl LivreComptable {
 	}
 }
 
+fn get_monaie() -> String {
+	let locale = env::var("LC_MONETARY")
+		.or_else(|_| env::var("LC_ALL"))
+		.or_else(|_| env::var("LANG"))
+		.unwrap_or_else(|_| "en_US".to_string());
+
+	let cleaned = locale.split('.').next().unwrap_or("en_US");
+	let code = cleaned.get(3..5).unwrap_or("US");
+
+	let map = HashMap::from([
+		("US", "$"),	// États-Unis
+		("CA", "$"),	// Canada
+		("FR", "€"),	// France
+		("BE", "€"),	// Belgique
+		("GB", "£"),	// Grande Bretagne
+		("AU", "$"),	// Australie
+		("NG", "₦"),	// Nigéria
+		("ZA", "R"),	// Afrique du Sud
+		("IN", "₹"),	// Inde
+		("ES", "€"),	// Espagne
+		("MX", "$"),	// Mexique
+	]);
+
+	map.get(code).map_or("?", |v| *v).to_string()
+}
+
 pub mod wrapper_sqlite3;
 pub mod wrapper_readline;
 pub mod ouvre_livre;
+pub mod ouvre_locale;
 pub mod ajoute;
+pub mod ajoute_locale;
+pub mod menus;
+pub mod menus_fonctions;
 pub mod lc_utils;
 
 /*
@@ -114,22 +149,27 @@ pub mod lc_utils;
 !!!!!! lc_libs/mod.rs: Définie les structs et initialise LivreComptable.
 !!!!!! wrapper_readline.rs, wrapper_sqlite3.rs: Essentiels pour interragir
 
-### lc_libs/ouvre_livre.rs: Créé ou transfert data de la bd vers la mémoire.
+### lc_libs/ouvre_livre.rs: Créé ou transfert le data de la bd vers la mémoire.
 
 ### lc_libs/ajoute.rs: Sert à ouvre_livre.rs et le menu principal pour
                        initialiser nouveaux Compte et/ou Catégorie
 
+### lc_libs/menus.rs: Affiche le menu et via la fonction passeur()
+                      réparti les commandes.
+
+### lc_utils.rs: fonctions string_2_cent() et cent_2-string()
+
 
 
 // lc_initLivre.cpp
-	bool initLivre();
-	void incantationSQL(std::string, std::string);
+✅	bool initLivre();
+✅	void incantationSQL(std::string, std::string);
 
 // lc_utils.cpp
 	void twistAccent(const char *, int &);
 	bool testMontant(std::string &);
-	std::string dollars2cents(const std::string &);	// Convert dollars to cents
-	std::string cents2dollars(const std::string &);	// Convert cents to dollars
+✅	std::string dollars2cents(const std::string &);	// Convert dollars to cents
+✅	std::string cents2dollars(const std::string &);	// Convert cents to dollars
 
 	bool sortTransDateAsc(transaction, transaction);
 	bool sortTransDateDesc(transaction, transaction); 
@@ -140,16 +180,16 @@ pub mod lc_utils;
 	void publishTransaction(struct transaction&);
 
 // lc_const_dest.cpp
-	LivreComptable();
-	~LivreComptable();
+✅	LivreComptable();
+	~LivreComptable();	// Plus besoin
 
 // lc_ouvre_ferme.cpp
-	bool ouvreLivre(std::string, bool);
-	void fermeLivre();
+✅	bool ouvreLivre(std::string, bool);	// Dans ouvre_livre.rs
+✅	void fermeLivre();					// Plus besoin
 
 // lc_ajoute.cpp
-	bool ajoutCompte();
-	bool ajoutCategorie();
+✅	bool ajoutCompte();		// Dans ajoute.rs
+✅	bool ajoutCategorie();	// Dans ajoute.rs
 
 // lc_supprime.cpp
 	void suppCompte();
@@ -161,11 +201,11 @@ pub mod lc_utils;
 	void sommaireMois();
 
 // lc_set2mem.cpp
-	int setMaster2mem(char **);
-	int setCategories2mem(char **);
-	int setFavorites2mem(char **);
-	int setTransactions2mem(char **);
-	int setQuestion2mem(char **);
+✅	int setMaster2mem(char **);			// Dans ouvre_livre.rs
+✅	int setCategories2mem(char **);		// Dans ouvre_livre.rs
+✅	int setFavorites2mem(char **);		// Dans ouvre_livre.rs
+✅	int setTransactions2mem(char **);	// Dans ouvre_livre.rs
+✅	int setQuestion2mem(char **);		// Dans ouvre_livre.rs
 
 // lc_questions.cpp
 	void questionBD();

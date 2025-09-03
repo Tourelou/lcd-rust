@@ -1,4 +1,5 @@
-use std::collections::HashMap;
+// wrapper_sqlite3.rs
+
 use std::ffi::{CString, CStr, c_void};
 use std::os::raw::{c_char, c_int};
 use std::ptr;
@@ -61,10 +62,10 @@ impl Connection {
 		else { Ok(()) }
 	}
 
-	pub fn query(&self, sql: &str) -> Result<Vec<HashMap<String, String>>, String> {
+	pub fn query(&self, sql: &str) -> Result<Vec<Vec<(String, String)>>, String> {
 		let c_sql = CString::new(sql).map_err(|e| format!("sqlite3 error: Invalid SQL: {}", e))?;
 		let mut errmsg: *mut c_char = ptr::null_mut();
-		let mut results: Vec<HashMap<String, String>> = Vec::new();
+		let mut results: Vec<Vec<(String, String)>> = Vec::new();
 		let results_ptr = &mut results as *mut _ as *mut c_void;
 
 		extern "C" fn c_callback(
@@ -78,11 +79,11 @@ impl Connection {
 					return 1;
 				}
 
-				let results = &mut *(arg as *mut Vec<HashMap<String, String>>);
+				let results = &mut *(arg as *mut Vec<Vec<(String, String)>>);
 				let values = std::slice::from_raw_parts(argv, argc as usize);
 				let columns = std::slice::from_raw_parts(col_names, argc as usize);
 
-				let mut row = HashMap::new();
+				let mut row = Vec::new();
 				for i in 0..(argc as usize) {
 					let col = match CStr::from_ptr(columns[i]).to_str() {
 						Ok(s) => s.to_owned(),
@@ -90,14 +91,13 @@ impl Connection {
 					};
 					let val = if values[i].is_null() {
 						"".to_string()
-					}
-					else {
+					} else {
 						match CStr::from_ptr(values[i]).to_str() {
 							Ok(s) => s.to_owned(),
 							Err(_) => "<invalid utf8>".to_string(),
 						}
 					};
-					row.insert(col, val);
+					row.push((col, val));
 				}
 
 				results.push(row);
@@ -120,11 +120,13 @@ impl Connection {
 				let err = unsafe { CStr::from_ptr(errmsg).to_string_lossy().into_owned() };
 				unsafe { sqlite3_free(errmsg as *mut c_void) };
 				err
-			}
-			else { "Unknown error".to_string() };
+			} else {
+				"Unknown error".to_string()
+			};
 			Err(format!("sqlite3 error: {}", msg))
+		} else {
+			Ok(results)
 		}
-		else { Ok(results) }
 	}
 }
 

@@ -83,52 +83,24 @@ r#"--------------------------------------------------------
 --- {1},  by Daniel Vaillancourt, version {2} ---
 --------------------------------------------------------"#;
 
-const  TYPE_COMPTE_FR: &str =
-"Type de compte|Compte courant|Compte épargne|Carte de crédit|Votre choix";
-const  TYPE_CATEGORIE_FR: &str =
-"Type de catégorie|En entrée ex.: Paye|En Sortie ex.: Nourriture|Votre choix";
-
-const TYPE_COMPTE_ES: &str =
-"Tipo de cuenta|Cuenta corriente|Cuenta de ahorros|Tarjeta de crédito|Su elección";
-const TYPE_CATEGORIE_ES: &str =
-"Tipo de categoría|Ingreso ej.: Sueldo|Gasto ej.: Comida|Su elección";
-
-const TYPE_COMPTE_EN: &str =
-"Account type|Checking account|Savings account|Credit card|Your choice";
-const TYPE_CATEGORIE_EN: &str =
-"Category type|Income e.g.: Salary|Expense e.g.: Food|Your choice";
-
 
 #[derive(Debug)]
 pub struct LangStrings {
-	pub usage: &'static str,
-	pub options: &'static str,
-	pub ver: &'static str,
-	pub ver_desc: &'static str,
-	pub term_size: &'static str,
-	pub err_date: &'static str,
-	pub err_arguments: &'static str,
-	pub err_chdir: &'static str,
-	pub err_is_dir: &'static str,
-	pub err_echec: &'static str,
-	pub err_not_sqlite3: &'static str,
-	pub err_read_file: &'static str,
-	pub err_open_base: &'static str,
-	pub err_create_table: &'static str,
-	pub exit_no_compte: &'static str,
-	pub exit_no_categorie: &'static str,
-	pub err_ecriure_db: &'static str,
-	pub header: &'static str,
-	pub head_nouv_compte: &'static str,
-	pub nom_compte: &'static str,
-	pub ref_compte: &'static str,
-	pub type_compte: &'static str,
-	pub depart_compte: &'static str,
-	pub head_nouv_categorie: &'static str,
-	pub nom_categorie: &'static str,
-	pub type_categorie: &'static str,
-	pub new_db: &'static str,
-	pub ouverture: &'static str,
+	pub usage: &'static str,				// parse.rs
+	pub options: &'static str,				// parse.rs
+	pub ver: &'static str,					// parse.rs
+	pub ver_desc: &'static str,				// parse.rs
+	pub term_size: &'static str,			// main.rs
+	pub err_date: &'static str,				// amj_date.rs
+	pub err_arguments: &'static str,		// parse.rs
+	pub err_chdir: &'static str,			// main.rs
+	pub err_is_dir: &'static str,			// main.rs
+	pub err_echec: &'static str,			// main.rs
+	pub err_not_sqlite3: &'static str,		// main.rs
+	pub err_read_file: &'static str,		// main.rs
+	pub header: &'static str,				// main.rs
+	pub new_db: &'static str,				// main.rs
+	pub ouverture: &'static str,			// main.rs
 }
 
 pub const LANG_FR: LangStrings = LangStrings {
@@ -144,27 +116,13 @@ pub const LANG_FR: LangStrings = LangStrings {
 	err_echec: "Échec:",
 	err_not_sqlite3: "Le fichier n'est pas une base SQLite.",
 	err_read_file: "Erreur lors de la lecture du fichier:",
-	err_open_base: "Erreur lors de l'ouverture de la base",
-	err_create_table: "Erreur lors de la création de tables essentielles.",
-	exit_no_compte: "Ne peux pas marcher si aucun compte n'est créé",
-	exit_no_categorie: "Ne peux pas marcher si aucune catégorie n'est créé",
-	err_ecriure_db: "Erreur en écriture vers la base de données",
 	header: HEADER_FR,
-	head_nouv_compte: "Création de nouveau(x) compte(s) aujourd'hui le",
-	nom_compte:    "        Nom du compte       : ",
-	ref_compte:    "        # de référence      : ",
-	type_compte: TYPE_COMPTE_FR,
-	depart_compte: "        Montant de départ   : ",
-	head_nouv_categorie: "Création de nouvelle(s) catégorie(s)",
-	nom_categorie: "        Nom de catégorie    : ",
-	type_categorie: TYPE_CATEGORIE_FR,
 	new_db: "n'existe pas.\n\nCréation d'un nouveau livre ?",
 	ouverture: "Ouverture du livre «{1}» à partir du répertoire «{2}»",
 };
 
 pub const LANG_ES: LangStrings = LangStrings {
 	usage: "['Libro de cuentas']",
-	// usage: "['Libro contable']",
 	options: OPTIONS_ES,
 	ver: ": versión",
 	ver_desc: ": Libro contable por línea de comandos, versión",
@@ -176,20 +134,7 @@ pub const LANG_ES: LangStrings = LangStrings {
 	err_echec: "Fallo:",
 	err_not_sqlite3: "El archivo no es una base de datos SQLite.",
 	err_read_file: "Error al leer el archivo:",
-	err_open_base: "Error al abrir la base de datos",
-	err_create_table: "Error al crear las tablas esenciales.",
-	exit_no_compte: "No se puede continuar si no se ha creado ninguna cuenta",
-	exit_no_categorie: "No se puede continuar si no se ha creado ninguna categoría",
-	err_ecriure_db: "Error al escribir en la base de datos",
 	header: HEADER_ES,
-	head_nouv_compte: "Creación de nueva(s) cuenta(s) hoy en",
-	nom_compte:    "        Nombre de cuenta    : ",
-	ref_compte:    "        Nº de referencia    : ",
-	type_compte: TYPE_COMPTE_ES,
-	depart_compte: "        Monto inicial       : ",
-	head_nouv_categorie: "Creación de nueva(s) categoría(s)",
-	nom_categorie: "        Nombre de categoría : ",
-	type_categorie: TYPE_CATEGORIE_ES,
 	new_db: "no existe.\n\n¿Creando un nuevo libro?",
 	ouverture: "Abriendo el libro «{1}» desde el directorio «{2}»",
 };
@@ -207,33 +152,24 @@ pub const LANG_EN: LangStrings = LangStrings {
 	err_echec: "Failure:",
 	err_not_sqlite3: "The file is not a SQLite database.",
 	err_read_file: "Error reading the file:",
-	err_open_base: "Error opening the database",
-	err_create_table: "Error creating essential tables.",
-	exit_no_compte: "Cannot proceed if no account is created",
-	exit_no_categorie: "Cannot proceed if no category is created",
-	err_ecriure_db: "Error writing to database",
 	header: HEADER_EN,
-	head_nouv_compte: "Creating new account(s) today on",
-	nom_compte:    "        Account name        : ",
-	ref_compte:    "        Reference #         : ",
-	type_compte: TYPE_COMPTE_EN,
-	depart_compte: "        Starting amount     : ",
-	head_nouv_categorie: "Creating new category(ies)",
-	nom_categorie: "        Category name       : ",
-	type_categorie: TYPE_CATEGORIE_EN,
 	new_db: "does not exist.\n\nCreating a new book ?",
 	ouverture: "Opening book «{1}» from directory «{2}»",
 };
 
-pub fn set_lang_vec() -> LangStrings {
-	match get_system_lang().as_str() {
+pub fn set_lang_vec() -> (String, LangStrings) {
+	let s = get_system_lang();
+	let lang = match s.as_str() {
 		"fr" => LANG_FR,
 		"es" => LANG_ES,
 		_ => LANG_EN,
-	}
+	};
+
+	(s, lang)
+
 }
 
-fn get_system_lang() -> String {
+pub fn get_system_lang() -> String {
 	let raw_lang = std::env::var("LC_ALL")
 		.or_else(|_| env::var("LANG"))
 		.or_else(|_| env::var("LANGUAGE"))

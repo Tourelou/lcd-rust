@@ -15,11 +15,9 @@ use std::io::{self, Read, Write, BufRead, Result};
 
 use parse::VarsApp;
 
-use crate::amj_date::AMJDate;
-
 const DEFAUT_PRGNAME: &str = "lcd";
 const DEFAUT_LIVRE: &str = "LivreComptable";
-const VERSION: &str = "2025-08-29";
+const VERSION: &str = "2025-09-02";
 
 /// Retourne la largeur du terminal en colonnes.
 /// Si la détection échoue, retourne 0 silencieusement.
@@ -73,11 +71,6 @@ fn is_sqlite_file(path: &String) -> Result<bool> {
 	Ok(&buffer == expected_signature)
 }
 
-fn get_annee(date: &AMJDate) -> String {
-	println!("{date}");
-	date.aujourdhui[0..4].to_string()
-}
-
 fn main() -> ExitCode {
 // ############################################################################
 	// Récupère le nom et le path de l'exécutable
@@ -120,7 +113,8 @@ fn main() -> ExitCode {
 // ############################################################################
 	// Si aucun nom n’a été fourni, on met la valeur par défaut
 	if var_app.livre_name.is_none() {
-		var_app.livre_name = Some(format!("{}.{}", DEFAUT_LIVRE, get_annee(&var_app.date)));
+		var_app.livre_name = Some(format!("{}.{}", DEFAUT_LIVRE,
+									&var_app.date.aujourdhui[0..4].to_string()));
 		// CD vers exec_path
 		if let Err(e) = env::set_current_dir(exec_path) {
 			eprintln!("{} {} : {}", var_app.locale.err_chdir, exec_path, e);
