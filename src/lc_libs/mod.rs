@@ -5,9 +5,11 @@ use std::env;
 
 use crate::lc_libs::wrapper_sqlite3::Connection;
 use crate::lc_libs::wrapper_readline::Readline;
+use crate::lc_libs::wrapper_readline::clear_readline_history;
 
 #[allow(dead_code)]
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
+#[derive(Clone)]
 	pub struct Compte {
 		pub nom: String,
 		pub cmpt_ref: String,
@@ -23,7 +25,8 @@ use crate::lc_libs::wrapper_readline::Readline;
 	*/
 
 #[allow(dead_code)]
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
+#[derive(Clone)]
 	pub struct Categorie {
 		pub nom: String,
 		pub utilise: u16,
@@ -35,6 +38,8 @@ use crate::lc_libs::wrapper_readline::Readline;
 	╰────┴───────────────────────────╯╰────┴───────────────────────────╯╰────┴───────────────────────────╯
 	*/
 #[allow(dead_code)]
+#[derive(Debug)]
+#[derive(Clone)]
 	pub struct Transaction {
 		pub date: String,	// Sous forme: 2024-03-24
 		pub description: String,
@@ -55,7 +60,7 @@ use crate::lc_libs::wrapper_readline::Readline;
 pub struct LivreComptable {				// ouvre_livre.rs instancie LivreComptable
 	pub bd: Connection,
 	pub symbole_monaie: String,
-	pub readline_inst: Readline,
+	contexts: HashMap<String, Readline>,
 	pub COMPTES: Vec<Compte>,
 	pub CATEGORIES: Vec<Categorie>,
 	pub TRANSACTIONS: Vec<Transaction>,
@@ -95,7 +100,7 @@ impl LivreComptable {
 		Ok(LivreComptable {
 			bd: Connection::open(nom_bd)?,
 			symbole_monaie: get_monaie(),
-			readline_inst: Readline::new(),
+			contexts: HashMap::new(),
 			COMPTES: Vec::new(),
 			CATEGORIES: Vec::new(),
 			TRANSACTIONS: Vec::new(),
@@ -105,13 +110,37 @@ impl LivreComptable {
 			TMP_TRANSACTIONS: Vec::new(),
 		})
 	}
+
+	pub fn run_context(&mut self, name: &str, prompt: &str, use_history: bool) -> Option<String> {
+		let rl = self.contexts.entry(name.to_string()).or_insert_with(Readline::new);
+
+		clear_readline_history();
+
+		if use_history {
+			rl.inject_history();
+		}
+
+		rl.read_line(prompt, use_history)
+	}
+
+	pub fn show_history(&self, name: &str) {
+		if let Some(rl) = self.contexts.get(name) {
+			println!("Historique pour '{}':", name);
+			for (i, entry) in rl.get_history().iter().enumerate() {
+				println!("  {}: {}", i + 1, entry);
+			}
+		} else {
+			println!("Pas d'historique pour '{}'", name);
+		}
+	}
 }
 
 fn get_monaie() -> String {
 	let locale = env::var("LC_MONETARY")
 		.or_else(|_| env::var("LC_ALL"))
 		.or_else(|_| env::var("LANG"))
-		.unwrap_or_else(|_| "en_US".to_string());
+		.unwrap_or_else(|_| "en_US".to_string()
+	);
 
 	let cleaned = locale.split('.').next().unwrap_or("en_US");
 	let code = cleaned.get(3..5).unwrap_or("US");
@@ -130,7 +159,7 @@ fn get_monaie() -> String {
 		("MX", "$"),	// Mexique
 	]);
 
-	map.get(code).map_or("?", |v| *v).to_string()
+	map.get(code).map_or("$", |v| *v).to_string()
 }
 
 pub mod wrapper_sqlite3;
@@ -141,6 +170,10 @@ pub mod ajoute;
 pub mod ajoute_locale;
 pub mod menus;
 pub mod menus_fonctions;
+pub mod print_comptes;
+pub mod print_categories;
+pub mod supprime;
+pub mod supprime_locale;
 pub mod lc_utils;
 
 /*
@@ -212,13 +245,13 @@ pub mod lc_utils;
 	void fullQuestionBD();
 
 // lc_print_comptes.cpp
-	void printComptes(std::vector<struct compte>&);
-	void printAllComptes();
+✅	void printComptes(std::vector<struct compte>&);
+✅	void printAllComptes();
 
 // lc_print_categories.cpp
 	void printType();
-	void printCategories(std::vector<struct categorie>&);
-	void printAllCategories();
+✅	void printCategories(std::vector<struct categorie>&);
+✅	void printAllCategories();
 
 // lc_print_transactions.cpp
 	void print1Transaction(struct transaction&);

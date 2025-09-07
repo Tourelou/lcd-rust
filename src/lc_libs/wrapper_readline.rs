@@ -7,8 +7,12 @@ unsafe extern "C" {
 	fn add_history(line: *const c_char);
 	fn rl_initialize();
 	fn free(ptr: *mut c_void); // appel direct à free sans libc
+	fn clear_history(); // GNU Readline
 }
 
+pub fn clear_readline_history() {
+	unsafe { clear_history(); }
+}
 pub struct Readline {
 	history: Vec<String>,
 }

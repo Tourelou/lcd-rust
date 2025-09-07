@@ -1,29 +1,16 @@
 // ajoute.rs
 
-use crate::{lc_libs::{ajoute_locale, lc_utils::string_2_cent, wrapper_readline::Readline, Categorie, Compte},
-				parse::VarsApp};
-
 use super::LivreComptable;
+use super::ajoute_locale;
+use super::lc_utils::string_2_cent;
+use super::lc_utils::enable_raw_mode;
+use super::lc_utils::disable_raw_mode;
+use super::wrapper_readline::Readline;
+use super::{Categorie, Compte};
+
+use crate::parse::VarsApp;
+
 use std::io::{self, Read, Write};
-use std::process::Command;
-
-pub fn enable_raw_mode() {
-	// Sauvegarde les paramètres actuels du terminal
-	Command::new("stty")
-		.arg("-echo")
-		.arg("raw")
-		.status()
-		.expect("Échec de l'activation du mode brut");
-}
-
-pub fn disable_raw_mode() {
-	// Restaure les paramètres du terminal
-	Command::new("stty")
-		.arg("echo")
-		.arg("-raw")
-		.status()
-		.expect("Échec de la désactivation du mode brut");
-}
 
 fn get_menu(chaine: &str, index: u8) -> Option<String>{
 	// index sert à différencier si c'est pour Compte ou Catégorie
@@ -38,7 +25,7 @@ fn get_menu(chaine: &str, index: u8) -> Option<String>{
 	io::stdout().flush().unwrap();
 	enable_raw_mode();
 	let mut buffer = [0; 1]; // Lire un seul octet
-	if index == 0 {
+	if index == 0 {			// index 0 pour les paramètres d'un compte
 		loop {
 			io::stdin().read_exact(&mut buffer).unwrap();
 			match buffer[0] {
@@ -66,7 +53,7 @@ fn get_menu(chaine: &str, index: u8) -> Option<String>{
 			}
 		}
 	}
-	if index == 1 { 
+	if index == 1 {			// index 0 pour les paramètres d'une catégorie
 		loop {
 			io::stdin().read_exact(&mut buffer).unwrap();
 			match buffer[0] {
@@ -94,17 +81,21 @@ fn get_menu(chaine: &str, index: u8) -> Option<String>{
 
 #[allow(unused)]
 impl LivreComptable {
-	pub fn ajoute_compte(&self, var_app: &VarsApp) -> Option<Compte> {
+	pub fn ajoute_compte(&mut self, var_app: &VarsApp) -> Option<Compte> {
 		let language = ajoute_locale::set_ajoute_lang(&var_app);
 
 		let mut rl = Readline::new();
-		let nom = match rl.read_line(format!("{}", language.nom_compte).as_str(), false) {
+		let nom = match self.run_context("sans-histoire",
+										format!("{}", language.nom_compte).as_str(),
+										 false) {
 			Some(line) => line,
 			None => return None,
 		};
 		if nom == "" { return None; }
 
-		let cmpt_ref = match rl.read_line(format!("{}", language.ref_compte).as_str(), false) {
+		let cmpt_ref = match self.run_context("sans-histoire",
+										format!("{}", language.ref_compte).as_str(),
+										false) {
 			Some(line) => line,
 			None => return None,
 		};
@@ -115,7 +106,9 @@ impl LivreComptable {
 			None => return None,
 		};
 
-		let depart_string = match rl.read_line(format!("{}", language.depart_compte).as_str(), false) {
+		let depart_string = match self.run_context("sans-histoire",
+										format!("{}", language.depart_compte).as_str(),
+										false) {
 			Some(line) => line,
 			None => return None,
 		};
@@ -136,11 +129,13 @@ impl LivreComptable {
 		Some(reponse)
 	}
 
-	pub fn ajoute_categorie(&self, var_app: &VarsApp) -> Option<Categorie> {
+	pub fn ajoute_categorie(&mut self, var_app: &VarsApp) -> Option<Categorie> {
 		let language = ajoute_locale::set_ajoute_lang(&var_app);
 
 		let mut rl = Readline::new();
-		let nom = match rl.read_line(format!("{}", language.nom_categorie).as_str(), false) {
+		let nom = match self.run_context("sans-histoire",
+										format!("{}", language.nom_categorie).as_str(),
+										false) {
 			Some(line) => line,
 			None => return None,
 		};

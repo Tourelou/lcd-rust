@@ -1,5 +1,24 @@
 // lc_utils.rs
 
+use std::process::Command;
+
+pub fn enable_raw_mode() {
+	// Sauvegarde les paramètres actuels du terminal
+	let _ = Command::new("stty")
+						.arg("-echo")
+						.arg("raw")
+						.status();
+}
+
+pub fn disable_raw_mode() {
+	// Restaure les paramètres du terminal
+	let _ =	Command::new("stty")
+						.arg("echo")
+						.arg("-raw")
+						.status()
+						.expect("Échec de la désactivation du mode brut");
+}
+
 pub fn string_2_cent(valeur: &String) -> Option<i64> {
 
 	let neg = valeur.chars().nth(0) == Some('-');
@@ -44,4 +63,15 @@ pub fn cent_2_string(valeur: i64) -> String {
 	sortie.push_str(format!("{:02}", cents).as_str());
 
 	sortie
+}
+
+pub fn get_choix() -> Result<u8, ()> {
+	let mut line = String::new();
+	std::io::stdin().read_line(&mut line).unwrap();
+
+	let line = line.trim(); // Enlève les retours à la ligne et les espaces
+	match line.parse::<u8>() {
+		Ok(n) => Ok(n),
+		Err(_) => Err(()),
+	}
 }

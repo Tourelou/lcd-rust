@@ -3,11 +3,6 @@ use std::io::{self, Read, Write};
 use crate::{lc_libs::LivreComptable, parse::VarsApp};
 use crate::lc_libs::menus_fonctions::passeur;
 
-pub struct MenuStrings {
-	pub menu_usage: &'static str,
-	pub options: &'static [&'static str],
-}
-
 pub const OPTIONS_FR: [&str; 14] = [
 	"Entrer une nouvelle transaction",
 	"Afficher tous les comptes",
@@ -59,19 +54,32 @@ pub const OPTIONS_EN: [&str; 14] = [
 	"Account summary",
 ];
 
+pub struct MenuStrings {
+	pub options: &'static [&'static str],
+	pub menu_usage: &'static str,
+	pub err_majeure: &'static str,
+	pub aurevoir: &'static str,
+}
+
 pub const LANG_FR: MenuStrings = MenuStrings {
-	menu_usage: "Choisir un item avec les flèches haut/bas puis enter ⏎\n --- « 0 » pour quitter",
 	options: &OPTIONS_FR,
+	menu_usage: "Choisir un item avec les flèches haut/bas puis enter ⏎\n --- « 0 » pour quitter",
+	err_majeure: "Erreur majeur - Sortie du programme.",
+	aurevoir: "À la prochaine ...",
 };
 
 pub const LANG_ES: MenuStrings = MenuStrings {
-	menu_usage: "Seleccione un elemento con las flechas arriba/abajo y luego ingrese ⏎\n --- « 0 » para salir",
 	options: &OPTIONS_ES,
+	menu_usage: "Seleccione un elemento con las flechas arriba/abajo y luego ingrese ⏎\n --- « 0 » para salir",
+	err_majeure: "Error mayor: salida del programa",
+	aurevoir: "¡Hasta la próxima!...",
 };
 
 pub const LANG_EN: MenuStrings = MenuStrings {
-	menu_usage: "Select an item with the up/down arrows then enter ⏎\n --- « 0 » to exit",
 	options: &OPTIONS_EN,
+	menu_usage: "Select an item with the up/down arrows then enter ⏎\n --- « 0 » to exit",
+	err_majeure: "Major Error - Program Exit.",
+	aurevoir: "See you next time...",
 };
 // ###########################################################################
 
@@ -93,9 +101,19 @@ pub fn affiche_menu(var_app: &VarsApp, livre: &mut LivreComptable) {
 		"es" => LANG_ES,
 		_ => LANG_EN,
 	};
-	// Passage en mode brut du terminal
-	let _ = std::process::Command::new("stty").arg("-echo").arg("cbreak").status();
-
+// ################### Définition des closures ############################
+	let mode_brute_on = || {
+		let _ = std::process::Command::new("stty")
+										.arg("-echo")
+										.arg("cbreak")
+										.status();
+	};
+	let mode_brute_off = || {
+		let _ = std::process::Command::new("stty")
+										.arg("echo")
+										.arg("-cbreak")
+										.status();
+	};
 	// Closure pour afficher le menu
 	let dessine_menu = |selected: usize| {
 		println!("--------------------------------------------------------");
@@ -109,9 +127,12 @@ pub fn affiche_menu(var_app: &VarsApp, livre: &mut LivreComptable) {
 		println!("--------------------------------------------------------");
 		print!("{}: ", language.menu_usage);
 		io::stdout().flush().unwrap();
-
 	};
+// ########################################################################
 
+	livre.imp_comptes(&livre.COMPTES);
+	// Passage en mode brut du terminal
+	mode_brute_on();
 	dessine_menu(selected);
 
 	loop {
@@ -130,23 +151,23 @@ pub fn affiche_menu(var_app: &VarsApp, livre: &mut LivreComptable) {
 				dessine_menu(selected);
 			}
 			[10] | [13] => { // Entrée
-				let _ = std::process::Command::new("stty").arg("echo").arg("-cbreak").status();
-//				println!("\n→ Sélection : {}", language.options[selected]);
+				mode_brute_off();
 				io::stdout().flush().unwrap();
 				if !passeur(selected, &var_app, livre) {
-					eprintln!("Erreur majeur - Sortie du programme");
+					eprintln!("{}", language.err_majeure);
 					break;
 				}
-				let _ = std::process::Command::new("stty").arg("-echo").arg("cbreak").status();
+				mode_brute_on();
 				dessine_menu(selected);
-//				break;
 			}
-			[b'0'] => { break; }	// Quitter
+			[b'0'] => {
+				// Rétablissement du mode normal du terminal
+				mode_brute_off();
+				println!("{}", language.aurevoir);
+				break;
+			}	// Quitter
 			
 			_ => {}	// On passe tout droit
 		}
 	}
-
-	// Rétablissement du mode normal du terminal
-	let _ = std::process::Command::new("stty").arg("echo").arg("-cbreak").status();
 }
