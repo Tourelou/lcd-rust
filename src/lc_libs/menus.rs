@@ -1,3 +1,5 @@
+// menus.rs - Gestion des menus
+
 use std::io::{self, Read, Write};
 
 use crate::{lc_libs::LivreComptable, parse::VarsApp};
@@ -134,7 +136,6 @@ pub fn affiche_menu(var_app: &VarsApp, livre: &mut LivreComptable) {
 	// Passage en mode brut du terminal
 	mode_brute_on();
 	dessine_menu(selected);
-
 	loop {
 		let mut buffer = [0; 3];
 		let n = io::stdin().read(&mut buffer).unwrap();
@@ -166,8 +167,8 @@ pub fn affiche_menu(var_app: &VarsApp, livre: &mut LivreComptable) {
 				println!("{}", language.aurevoir);
 				break;
 			}	// Quitter
-			
-			_ => {}	// On passe tout droit
+
+			_ => {}
 		}
 	}
 }

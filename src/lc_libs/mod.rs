@@ -60,6 +60,7 @@ use crate::lc_libs::wrapper_readline::clear_readline_history;
 pub struct LivreComptable {				// ouvre_livre.rs instancie LivreComptable
 	pub bd: Connection,
 	pub symbole_monaie: String,
+	pub abrev_langue: String,	// "fr", "en", "es"
 	contexts: HashMap<String, Readline>,
 	pub COMPTES: Vec<Compte>,
 	pub CATEGORIES: Vec<Categorie>,
@@ -100,6 +101,7 @@ impl LivreComptable {
 		Ok(LivreComptable {
 			bd: Connection::open(nom_bd)?,
 			symbole_monaie: get_monaie(),
+			abrev_langue: String::new(),
 			contexts: HashMap::new(),
 			COMPTES: Vec::new(),
 			CATEGORIES: Vec::new(),
@@ -174,6 +176,8 @@ pub mod print_comptes;
 pub mod print_categories;
 pub mod supprime;
 pub mod supprime_locale;
+pub mod print_transactions;
+pub mod questions;
 pub mod lc_utils;
 
 /*

@@ -11,8 +11,6 @@ pub struct MenuFonctionsStrings {
 	pub compte_abort: &'static str,
 	pub create_categorie: &'static str,
 	pub categorie_abort: &'static str,
-	pub sql_input: &'static str,
-	pub reponse_sql: &'static str,
 }
 
 pub const LANG_FR: MenuFonctionsStrings = MenuFonctionsStrings {
@@ -20,8 +18,6 @@ pub const LANG_FR: MenuFonctionsStrings = MenuFonctionsStrings {
 	compte_abort: "Création de compte avortée.",
 	create_categorie: "Création d'une nouvelle catégorie.",
 	categorie_abort: "Création de catégorie avortée.",
-	sql_input: "Entrez une requête SQL: ",
-	reponse_sql: "---------- Réponse ----------",
 };
 
 pub const LANG_ES: MenuFonctionsStrings = MenuFonctionsStrings {
@@ -29,8 +25,6 @@ pub const LANG_ES: MenuFonctionsStrings = MenuFonctionsStrings {
 	compte_abort: "Creación de cuenta cancelada.",
 	create_categorie: "Creación de una nueva categoría.",
 	categorie_abort: "Creación de categoría  cancelada.",
-	sql_input: "Introduzca una consulta SQL: ",
-	reponse_sql: "---------- Respuesta ----------",
 };
 
 pub const LANG_EN: MenuFonctionsStrings = MenuFonctionsStrings {
@@ -38,8 +32,6 @@ pub const LANG_EN: MenuFonctionsStrings = MenuFonctionsStrings {
 	compte_abort: "Account creation aborted.",
 	create_categorie: "Creating a new category.",
 	categorie_abort: "Category creation aborted.",
-	sql_input: "Enter an SQL query: ",
-	reponse_sql: "---------- Answer ----------",
 };
 
 // ###########################################################################
@@ -101,30 +93,13 @@ pub fn passeur(menu_no: usize, app_vars: &VarsApp, livre: &mut LivreComptable) -
 
 		6 => { return livre.supp_categorie(&app_vars); },
 
-		12 => { let nom = match livre.run_context("full-access",
-															language.sql_input,
-														true) {
-					Some(line) => line,
-					None => return true,
-				};
-				if nom == "" { return true; }
-				println!("{}", language.reponse_sql);
+		7 => livre.printTransactions(&livre.FAVORITES, true),
 
-				match livre.bd.query(nom.as_str()) {
-					Ok(rows) => {
-						for (i, row) in rows.iter().enumerate() {
-							for (key, val) in row {
-								println!("{key}: {val}");
-							}
-							if i < rows.len() - 1 {
-								println!("----------");
-							}
-						}
-					},
-					Err(e) => eprintln!("{e}")
-				};
-			},
-		_ => {println!("Fonction pas encore implémentée.")},
+		11 => { return livre.questionBD(&app_vars); },
+
+		12 => { return livre.fullQuestionBD(&app_vars); },
+		
+		_ => {println!("{menu_no} Fonction pas encore implémentée.")},
 	}
 	return true;
 }

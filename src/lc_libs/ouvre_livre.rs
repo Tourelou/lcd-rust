@@ -16,6 +16,7 @@ impl LivreComptable {
 								.as_ref()
 								.unwrap())
 								.map_err(|e| format!("{} : {}", language.err_open_base, e))?;
+		lc.abrev_langue = var_app.loc_string.clone();
 		if nouveau {
 			println!("----------------------------------------------------------");
 			println!("{} {}", language.head_nouv_compte ,var_app.date.derniere_entree);
