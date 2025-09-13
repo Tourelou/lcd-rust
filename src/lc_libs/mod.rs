@@ -166,6 +166,7 @@ fn get_monaie() -> String {
 
 pub mod wrapper_sqlite3;
 pub mod wrapper_readline;
+pub mod lc_utils;
 pub mod ouvre_livre;
 pub mod ouvre_locale;
 pub mod ajoute;
@@ -178,7 +179,7 @@ pub mod supprime;
 pub mod supprime_locale;
 pub mod print_transactions;
 pub mod questions;
-pub mod lc_utils;
+pub mod sommaire_mois;
 
 /*
 ### main.rs, parse.rs, locale.rs et amj_date.rs

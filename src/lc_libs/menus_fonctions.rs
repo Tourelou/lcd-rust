@@ -1,9 +1,6 @@
 // menus_fonctions.rs
 
 use crate::{lc_libs::Categorie, parse::VarsApp};
-// use crate::LivreComptable;
-// use crate::lc_libs::wrapper_sqlite3::Connection::query;
-
 use super::LivreComptable;
 
 pub struct MenuFonctionsStrings {
@@ -98,7 +95,9 @@ pub fn passeur(menu_no: usize, app_vars: &VarsApp, livre: &mut LivreComptable) -
 		11 => { return livre.questionBD(&app_vars); },
 
 		12 => { return livre.fullQuestionBD(&app_vars); },
-		
+
+		13 => { return livre.sommaireMois(); },
+
 		_ => {println!("{menu_no} Fonction pas encore implémentée.")},
 	}
 	return true;
