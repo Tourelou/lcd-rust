@@ -5,10 +5,7 @@ use super::ajoute_locale;
 use super::lc_utils::string_2_cent;
 use super::lc_utils::enable_raw_mode;
 use super::lc_utils::disable_raw_mode;
-use super::wrapper_readline::Readline;
 use super::{Categorie, Compte};
-
-use crate::parse::VarsApp;
 
 use std::io::{self, Read, Write};
 
@@ -79,12 +76,15 @@ fn get_menu(chaine: &str, index: u8) -> Option<String>{
 	None
 }
 
-#[allow(unused)]
 impl LivreComptable {
-	pub fn ajoute_compte(&mut self, var_app: &VarsApp) -> Option<Compte> {
-		let language = ajoute_locale::set_ajoute_lang(&var_app);
+	pub fn ajoute_compte(&mut self) -> Option<Compte> {
+		let language = match self.abrev_langue.as_str() {
+			"fr" => ajoute_locale::LANG_FR,
+			"es" => ajoute_locale::LANG_ES,
+			_ => ajoute_locale::LANG_EN,
+		};
 
-		let mut rl = Readline::new();
+//		let mut rl = Readline::new();
 		let nom = match self.run_context("sans-histoire",
 										format!("{}", language.nom_compte).as_str(),
 										 false) {
@@ -129,10 +129,14 @@ impl LivreComptable {
 		Some(reponse)
 	}
 
-	pub fn ajoute_categorie(&mut self, var_app: &VarsApp) -> Option<Categorie> {
-		let language = ajoute_locale::set_ajoute_lang(&var_app);
+	pub fn ajoute_categorie(&mut self) -> Option<Categorie> {
+		let language = match self.abrev_langue.as_str() {
+			"fr" => ajoute_locale::LANG_FR,
+			"es" => ajoute_locale::LANG_ES,
+			_ => ajoute_locale::LANG_EN,
+		};
 
-		let mut rl = Readline::new();
+//		let mut rl = Readline::new();
 		let nom = match self.run_context("sans-histoire",
 										format!("{}", language.nom_categorie).as_str(),
 										false) {

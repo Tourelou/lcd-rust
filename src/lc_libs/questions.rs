@@ -1,8 +1,7 @@
 // questions.rs
 
-use crate::{lc_libs::{	Transaction,
-						lc_utils::cent_2_string
-					}, parse::VarsApp};
+use crate::lc_libs::Transaction;
+use crate::lc_libs::lc_utils::cent_2_string;
 
 use super::LivreComptable;
 
@@ -97,8 +96,8 @@ pub const LANG_EN: QuestionsStrings = QuestionsStrings {
 #[allow(non_snake_case)]
 impl LivreComptable {
 
-	pub fn questionBD (&mut self, var_app: &VarsApp) -> bool {
-		let language = match var_app.loc_string.as_str() {
+	pub fn questionBD (&mut self) -> bool {
+		let language = match self.abrev_langue.as_str() {
 			"fr" => LANG_FR,
 			"es" => LANG_ES,
 			_ => LANG_EN,
@@ -169,8 +168,8 @@ impl LivreComptable {
 		return  true;
 	}
 
-	pub fn fullQuestionBD(&mut self, var_app: &VarsApp) -> bool {
-		let language = match var_app.loc_string.as_str() {
+	pub fn fullQuestionBD(&mut self) -> bool {
+		let language = match self.abrev_langue.as_str() {
 			"fr" => LANG_FR,
 			"es" => LANG_ES,
 			_ => LANG_EN,

@@ -1,7 +1,5 @@
 // ajoute_locale.rs
 
-use crate::parse;
-
 const  TYPE_COMPTE_FR: &str =
 "Type de compte|Compte courant|Compte épargne|Carte de crédit|Votre choix";
 const  TYPE_CATEGORIE_FR: &str =
@@ -54,11 +52,3 @@ pub const LANG_EN: AjouteString = AjouteString {
 	nom_categorie: "        Category name       : ",
 	type_categorie: TYPE_CATEGORIE_EN,
 };
-
-pub fn set_ajoute_lang(appvar: &parse::VarsApp) -> AjouteString {
-	match appvar.loc_string.as_str() {
-		"fr" => LANG_FR,
-		"es" => LANG_ES,
-		_ => LANG_EN,
-	}
-}

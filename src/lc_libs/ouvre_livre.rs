@@ -26,7 +26,7 @@ impl LivreComptable {
 					Nom TEXT, Ref TEXT, Type TEXT, Départ INT, Présent INT )") {
 				Ok(()) => {
 					loop {
-						match lc.ajoute_compte(var_app) {
+						match lc.ajoute_compte() {
 							Some(c) => {
 								let sql_string = format!(
 			"INSERT INTO Master (Nom, Ref, Type, Départ, Présent) VALUES ('{}', '{}', '{}', {}, {})",
@@ -69,7 +69,7 @@ impl LivreComptable {
 						lc.CATEGORIES.push(compte_cat);
 					}
 					loop {
-						match lc.ajoute_categorie(var_app) {
+						match lc.ajoute_categorie() {
 							Some(c) => {
 								let sql_string = format!(
 					"INSERT INTO Catégories (Nom, Utilisé, Type) VALUES ('{}', 0, '{}')",

@@ -45,7 +45,7 @@ pub fn passeur(menu_no: usize, app_vars: &VarsApp, livre: &mut LivreComptable) -
 		1 => livre.imp_comptes(&livre.COMPTES),
 
 		2 => { println!("{}", language.create_compte);			// Ajouter un compte
-				match livre.ajoute_compte(app_vars) {
+				match livre.ajoute_compte() {
 					Some(c) => {
 						let sql_string = format!(			// D'abord dans la bd
 					"INSERT INTO Master (Nom, Ref, Type, Départ, Présent) VALUES ('{}', '{}', '{}', {}, {})",
@@ -69,12 +69,12 @@ pub fn passeur(menu_no: usize, app_vars: &VarsApp, livre: &mut LivreComptable) -
 				}
 			},
 
-		3 => { return livre.supp_compte(&app_vars); },
+		3 => { return livre.supp_compte(); },
 
 		4 => livre.imp_categories(&livre.CATEGORIES),
 
 		5 => { println!("{}", language.create_categorie);		// Ajouter une catégorie
-				match livre.ajoute_categorie(app_vars) {
+				match livre.ajoute_categorie() {
 					Some(c) => {
 						let sql_string = format!(			// D'abord dans la bd
 					"INSERT INTO Catégories (Nom, Utilisé, Type) VALUES ('{}', 0, '{}')",
@@ -88,13 +88,15 @@ pub fn passeur(menu_no: usize, app_vars: &VarsApp, livre: &mut LivreComptable) -
 				}
 			},
 
-		6 => { return livre.supp_categorie(&app_vars); },
+		6 => { return livre.supp_categorie(); },
 
 		7 => livre.printTransactions(&livre.FAVORITES, true),
 
-		11 => { return livre.questionBD(&app_vars); },
+		10 => { return livre.supp_favorite(); },
 
-		12 => { return livre.fullQuestionBD(&app_vars); },
+		11 => { return livre.questionBD(); },
+
+		12 => { return livre.fullQuestionBD(); },
 
 		13 => { return livre.sommaireMois(); },
 

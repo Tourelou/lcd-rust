@@ -38,7 +38,7 @@ use crate::lc_libs::wrapper_readline::clear_readline_history;
 	╰────┴───────────────────────────╯╰────┴───────────────────────────╯╰────┴───────────────────────────╯
 	*/
 #[allow(dead_code)]
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 #[derive(Clone)]
 	pub struct Transaction {
 		pub date: String,	// Sous forme: 2024-03-24
