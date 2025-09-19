@@ -4,8 +4,9 @@ use std::io::{self, Write};
 
 use super::LivreComptable;
 use super::nouv_trans_locale;
+use crate::lc_libs::Transaction;
 use crate::lc_libs::lc_utils::string_2_cent;
-use crate::lc_libs::{lc_utils::get_choix, Transaction};
+use crate::lc_libs::lc_utils::get_choix;
 use crate::parse::VarsApp;
 
 impl LivreComptable {
@@ -64,6 +65,7 @@ impl LivreComptable {
 			println!("----------");
 			if self.FAVORITES.is_empty() {
 				println!("{}", language.no_favorite);
+				println!("{}", language.trans_annulee);
 				return true;
 			}
 			println!("{}", language.choisir_favorite);

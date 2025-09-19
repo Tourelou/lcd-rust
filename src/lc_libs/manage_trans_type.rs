@@ -3,6 +3,7 @@
 use super::LivreComptable;
 use super::nouv_trans_locale;
 use crate::lc_libs::lc_utils::get_choix;
+use crate::lc_libs::lc_utils::string_2_cent;
 
 use std::io::{self, Write};
 use std::collections::HashMap;
@@ -107,5 +108,62 @@ impl LivreComptable {
 				}
 			}
 		}
+	}
+
+	pub fn modif_favorite(&mut self) -> bool {
+		let language = match self.abrev_langue.as_str() {
+			"fr" => nouv_trans_locale::LANG_FR,
+			"es" => nouv_trans_locale::LANG_ES,
+			_ => nouv_trans_locale::LANG_EN,
+		};
+
+		if self.FAVORITES.is_empty() {
+			println!("{}", language.no_favorite);
+			return true;
+		}
+		println!("{}",language.choix_fav_modif);
+		self.printTransactions(&self.FAVORITES, true);
+		print!("{}", language.zero_ou_enter);
+		io::stdout().flush().unwrap();
+
+		let choix = match get_choix() {
+			Ok(n) if n > 0 && (n as usize) <= self.FAVORITES.len() => n - 1,
+			_ => { return true; }
+		};
+
+		let mut montant: i64 = 0;
+		loop {
+			let reponse = self.run_context("sans-histoire",
+							language.montant_de, false).unwrap_or_default();
+
+			if reponse == "0" { break; } // Un simple break montant déjà à 0.
+			if reponse == "" { return true; }
+
+			montant = match string_2_cent(&reponse) {
+				Some(v) => v,
+				None => {
+					println!("{}", language.mauvais_montant);
+					continue; // ou return false; selon la logique que tu veux
+				},
+			};
+			println!("----------");
+			break;
+		};
+
+		let fav_choisi = &mut self.FAVORITES[choix as usize];
+		let sql = format!("UPDATE Favorites SET Montant = {} WHERE Description = '{}'",
+															montant, fav_choisi.description);
+		match self.bd.exec(&sql) {
+			Ok(_) => {
+				fav_choisi.montant = montant ;
+			}
+			Err(e) => {
+				eprint!("{e} : ");
+				return false;
+			}
+		}
+		println!("{}", language.fav_modif_succes.replace("{1}", fav_choisi.description.as_str()));
+		self.print1Transaction(&self.FAVORITES[choix as usize].clone());
+		return true;
 	}
 }

@@ -96,6 +96,8 @@ pub fn passeur(menu_no: usize, app_vars: &mut VarsApp, livre: &mut LivreComptabl
 
 		8 => { return livre.new_trans(app_vars, true); },
 
+		9 => { return livre.modif_favorite()}
+
 		10 => { return livre.supp_favorite(); },
 
 		11 => { return livre.questionBD(); },
