@@ -74,8 +74,10 @@ fn is_sqlite_file(path: &String) -> Result<bool> {
 fn main() -> ExitCode {
 // ############################################################################
 	// Récupère le nom et le path de l'exécutable
-	let args: Vec<String> = env::args().collect();
-	let exec_full_path = Path::new(&args[0]);
+	let exec_full_path = match env::current_exe() {
+		Ok(path_buf) => path_buf,
+		Err(_) => { return ExitCode::FAILURE; },
+	};
 	
 	let exec_name = exec_full_path.file_name()
 	.and_then(|n| n.to_str())
@@ -84,6 +86,7 @@ fn main() -> ExitCode {
 	let exec_path = exec_full_path.parent()
 									.and_then(|p| p.to_str())
 									.unwrap_or(".");
+
 
 // ############################################################################
 	// Maintenant on parse et manipule le nom du livre
