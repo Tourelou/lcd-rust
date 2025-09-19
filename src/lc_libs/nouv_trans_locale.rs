@@ -1,0 +1,73 @@
+// nouv_trans_locale.rs
+
+pub struct NouvTransStrings {
+	pub question_date: &'static str,
+	pub date_acceptee: &'static str,
+	pub trans_annulee: &'static str,
+	pub date_pas_de_sens: &'static str,
+	pub desc_favorite: &'static str,
+	pub desc_transaction: &'static str,
+	pub no_favorite: &'static str,
+	pub choisir_favorite: &'static str,
+	pub zero_ou_enter: &'static str,
+	pub choisir_compte: &'static str,
+	pub choisir_categorie: &'static str,
+	pub montant_de: &'static str,
+	pub mauvais_montant: &'static str,
+	pub choisir_type: &'static str,
+	pub type_name: &'static str,
+}
+
+pub const LANG_FR: NouvTransStrings = NouvTransStrings {
+	question_date: "Entrez la date de la transaction,\n[0 pour annuler, enter pour accepter]: ",
+	date_acceptee: "Date acceptée ...",
+	trans_annulee: "Transaction annulée ...",
+	date_pas_de_sens: "La date ne fait pas de sens !!",
+	desc_favorite: "Une courte description\n[0 ou enter pour annuler]: ",
+	desc_transaction: "Une courte description ou @ pour une transaction favorite\n[0 ou enter pour annuler]: ",
+	no_favorite: "Aucune transaction favorite pour faire un choix.\nTransaction annulée ...",
+	choisir_favorite: "Choisir une transaction favorite par son numéro,",
+	zero_ou_enter: "[0 ou enter pour annuler]: ",
+	choisir_compte: "Choisir un compte par son numéro,",
+	choisir_categorie: "Choisir une catégorie par son numéro,",
+	montant_de: "Pour un montant de : ",
+	mauvais_montant: "----- Montant mal formatté. Doit être du genre: xxx,xx -----",
+	choisir_type: "Choisir un type de transaction par son numéro,",
+	type_name: "Dépôt|Débit|Crédit|Achat|Virement|Paiement",
+};
+
+pub const LANG_ES: NouvTransStrings = NouvTransStrings {
+	question_date: "Ingrese la fecha de la transacción,\n[0 para cancelar, enter para aceptar]: ",
+	date_acceptee: "Fecha aceptada ...",
+	trans_annulee: "Transacción cancelada ...",
+	date_pas_de_sens: "¡La fecha no tiene sentido!",
+	desc_favorite: "Una breve descripción\n[0 o enter para cancelar]: ",
+	desc_transaction: "Una breve descripción o @ para una transacción favorita\n[0 o enter para cancelar]: ",
+	no_favorite: "No hay transacciones favoritas para elegir.\nTransacción cancelada ...",
+	choisir_favorite: "Elija una transacción favorita por su número,",
+	zero_ou_enter: "[0 o enter para cancelar]: ",
+	choisir_compte: "Elija una cuenta por su número,",
+	choisir_categorie: "Elija una categoría por su número,",
+	montant_de: "Por un monto de: ",
+	mauvais_montant: "----- Monto mal formateado. Debe ser del tipo: xxx,xx -----",
+	choisir_type: "Elija un tipo de transacción por su número,",
+	type_name: "Depósito|Débito|Crédito|Compra|Transferencia|Pago",
+};
+
+pub const LANG_EN: NouvTransStrings = NouvTransStrings {
+	question_date: "Enter the transaction date,\n[0 to cancel, enter to accept]: ",
+	date_acceptee: "Date accepted ...",
+	trans_annulee: "Transaction cancelled ...",
+	date_pas_de_sens: "The date doesn't make sense!!",
+	desc_favorite: "A short description\n[0 or enter to cancel]: ",
+	desc_transaction: "A short description or @ for a favorite transaction\n[0 or enter to cancel]: ",
+	no_favorite: "No favorite transaction available to choose from.\nTransaction cancelled ...",
+	choisir_favorite: "Choose a favorite transaction by its number,",
+	zero_ou_enter: "[0 or enter to cancel]: ",
+	choisir_compte: "Choose an account by its number,",
+	choisir_categorie: "Choose a category by its number,",
+	montant_de: "For an amount of: ",
+	mauvais_montant: "----- Incorrectly formatted amount. Must be like: xxx.xx -----",
+	choisir_type: "Choose a transaction type by its number,",
+	type_name: "Deposit|Debit|Credit|Purchase|Transfer|Payment",
+};

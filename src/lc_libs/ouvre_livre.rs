@@ -10,7 +10,7 @@ use crate::parse::VarsApp;
 use super::LivreComptable;
 
 impl LivreComptable {
-	pub fn open_db(var_app: &VarsApp, nouveau: bool) -> Result<(), String> {
+	pub fn open_db(var_app: &mut VarsApp, nouveau: bool) -> Result<(), String> {
 		let language = ouvre_locale::set_ouvre_lang(&var_app);
 		let mut lc = LivreComptable::new(var_app.livre_name
 								.as_ref()
@@ -230,7 +230,7 @@ impl LivreComptable {
 		// 	println!("Date: {} - Description: {} - Type: {} - Compte: {} - Catégorie: {} - Montant: {}",
 		// 				f.date, f.description, f.t_type, f.compte, f.categorie, f.montant);
 		// }
-		menus::affiche_menu(&var_app, &mut lc);
+		menus::affiche_menu(var_app, &mut lc);
 		Ok(())
 	}
 }

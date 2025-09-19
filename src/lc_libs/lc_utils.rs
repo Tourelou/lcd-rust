@@ -47,7 +47,6 @@ pub fn string_2_cent(valeur: &String) -> Option<i64> {
 	conv_string.replace(&[',', '.'][..], "").parse::<i64>().ok()
 }
 
-#[allow(unused)]
 pub fn cent_2_string(valeur: i64) -> String {
 
 	let neg = valeur < 0;

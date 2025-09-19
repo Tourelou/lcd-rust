@@ -17,7 +17,7 @@ use parse::VarsApp;
 
 const DEFAUT_PRGNAME: &str = "lcd";
 const DEFAUT_LIVRE: &str = "LivreComptable";
-const VERSION: &str = "2025-09-04";
+const VERSION: &str = "2025-09-17";
 
 /// Retourne la largeur du terminal en colonnes.
 /// Si la détection échoue, retourne 0 silencieusement.
@@ -177,7 +177,7 @@ fn main() -> ExitCode {
 		// Ici on passe le nom à sqlite3
 		match is_sqlite_file(&var_app.livre_name.clone().unwrap()) {
 			Ok(true) => {
-				match LivreComptable::open_db(&var_app, false) {
+				match LivreComptable::open_db(&mut var_app, false) {
 					Ok(()) => {},
 					Err(msg) => eprintln!("{} {}", var_app.locale.err_echec, msg),
 				};
@@ -198,7 +198,7 @@ fn main() -> ExitCode {
 
 		match lettre {
 			Some('n') | Some('N') => println!("OK Bye."),
-			_ => {	match LivreComptable::open_db(&var_app, true) {
+			_ => {	match LivreComptable::open_db(&mut var_app, true) {
 						Ok(()) => {},
 						Err(msg) => eprintln!("{} {}", var_app.locale.err_echec, msg),
 					}

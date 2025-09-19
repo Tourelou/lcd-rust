@@ -7,7 +7,6 @@ use crate::lc_libs::wrapper_sqlite3::Connection;
 use crate::lc_libs::wrapper_readline::Readline;
 use crate::lc_libs::wrapper_readline::clear_readline_history;
 
-#[allow(dead_code)]
 #[derive(Debug, PartialEq)]
 #[derive(Clone)]
 	pub struct Compte {
@@ -24,7 +23,6 @@ use crate::lc_libs::wrapper_readline::clear_readline_history;
 	     ╰──────────────────────────────────┴──────────────╯     ╰──────────────────────────────────┴──────────────╯
 	*/
 
-#[allow(dead_code)]
 #[derive(Debug, PartialEq)]
 #[derive(Clone)]
 	pub struct Categorie {
@@ -37,7 +35,7 @@ use crate::lc_libs::wrapper_readline::clear_readline_history;
 	│  1 │ Compte #1                 ││  2 │ Compte #2                 ││  3 │ Carte de crédit #1        │
 	╰────┴───────────────────────────╯╰────┴───────────────────────────╯╰────┴───────────────────────────╯
 	*/
-#[allow(dead_code)]
+
 #[derive(Debug, PartialEq)]
 #[derive(Clone)]
 	pub struct Transaction {
@@ -55,7 +53,6 @@ use crate::lc_libs::wrapper_readline::clear_readline_history;
 				 ╰────────────────────────────────┴─────────────┴─────────────────────────────────────────╯
 	*/
 
-#[allow(dead_code)]
 #[allow(non_snake_case)]
 pub struct LivreComptable {				// ouvre_livre.rs instancie LivreComptable
 	pub bd: Connection,
@@ -95,7 +92,7 @@ pub struct LivreComptable {				// ouvre_livre.rs instancie LivreComptable
 */
 //	std::vector<std::string> typeTransaction = {"Dépôt", "Débit", "Crédit", "Achat", "Virement", "Paiement"};
 }
-#[allow(dead_code)]
+
 impl LivreComptable {
 	pub fn new(nom_bd: &String) -> Result<Self, String> {
 		Ok(LivreComptable {
@@ -125,16 +122,16 @@ impl LivreComptable {
 		rl.read_line(prompt, use_history)
 	}
 
-	pub fn show_history(&self, name: &str) {
-		if let Some(rl) = self.contexts.get(name) {
-			println!("Historique pour '{}':", name);
-			for (i, entry) in rl.get_history().iter().enumerate() {
-				println!("  {}: {}", i + 1, entry);
-			}
-		} else {
-			println!("Pas d'historique pour '{}'", name);
-		}
-	}
+	// pub fn show_history(&self, name: &str) {
+	// 	if let Some(rl) = self.contexts.get(name) {
+	// 		println!("Historique pour '{}':", name);
+	// 		for (i, entry) in rl.get_history().iter().enumerate() {
+	// 			println!("  {}: {}", i + 1, entry);
+	// 		}
+	// 	} else {
+	// 		println!("Pas d'historique pour '{}'", name);
+	// 	}
+	// }
 }
 
 fn get_monaie() -> String {
@@ -180,6 +177,9 @@ pub mod supprime_locale;
 pub mod print_transactions;
 pub mod questions;
 pub mod sommaire_mois;
+pub mod nouvelle_transaction;
+pub mod manage_trans_type;
+pub mod nouv_trans_locale;
 
 /*
 ### main.rs, parse.rs, locale.rs et amj_date.rs
@@ -205,14 +205,14 @@ pub mod sommaire_mois;
 
 // lc_utils.cpp
 	void twistAccent(const char *, int &);
-	bool testMontant(std::string &);
+✅	bool testMontant(std::string &);
 ✅	std::string dollars2cents(const std::string &);	// Convert dollars to cents
 ✅	std::string cents2dollars(const std::string &);	// Convert cents to dollars
 
 	bool sortTransDateAsc(transaction, transaction);
 	bool sortTransDateDesc(transaction, transaction); 
 
-	bool getReponse(const int);
+✅	bool getReponse(const int);
 
 // lc_publish.cpp
 	void publishTransaction(struct transaction&);
@@ -230,13 +230,13 @@ pub mod sommaire_mois;
 ✅	bool ajoutCategorie();	// Dans ajoute.rs
 
 // lc_supprime.cpp
-	void suppCompte();
-	void suppCategorie();
-	void suppFavorite();
+✅	void suppCompte();
+✅	void suppCategorie();
+✅	void suppFavorite();
 	void modifFavorite();
 
 // lc_sommaire_mois.cpp
-	void sommaireMois();
+✅	void sommaireMois();
 
 // lc_set2mem.cpp
 ✅	int setMaster2mem(char **);			// Dans ouvre_livre.rs
@@ -246,23 +246,23 @@ pub mod sommaire_mois;
 ✅	int setQuestion2mem(char **);		// Dans ouvre_livre.rs
 
 // lc_questions.cpp
-	void questionBD();
-	void fullQuestionBD();
+✅	void questionBD();
+✅	void fullQuestionBD();
 
 // lc_print_comptes.cpp
 ✅	void printComptes(std::vector<struct compte>&);
 ✅	void printAllComptes();
 
 // lc_print_categories.cpp
-	void printType();
+✅	void printType();
 ✅	void printCategories(std::vector<struct categorie>&);
 ✅	void printAllCategories();
 
 // lc_print_transactions.cpp
-	void print1Transaction(struct transaction&);
-	void printTransactions(std::vector<struct transaction>&, bool = false);
-	void printAllFavorites();
+✅	void print1Transaction(struct transaction&);
+✅	void printTransactions(std::vector<struct transaction>&, bool = false);
+✅	void printAllFavorites();
 
 // lc_nouvelle_trans.cpp
-	bool nouvelleTransaction(bool = false);
+✅	bool nouvelleTransaction(bool = false);
 */

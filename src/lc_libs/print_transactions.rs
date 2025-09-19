@@ -56,7 +56,7 @@ pub const LANG_EN: TransactionStrings = TransactionStrings {
 };
 
 
-#[allow(non_snake_case, unused)]
+#[allow(non_snake_case)]
 impl LivreComptable {
 	pub fn print1Transaction(&mut self, t: &Transaction) {
 		self.TMP_TRANSACTIONS.clear();

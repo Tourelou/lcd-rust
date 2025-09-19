@@ -6,54 +6,54 @@ use crate::{lc_libs::LivreComptable, parse::VarsApp};
 use crate::lc_libs::menus_fonctions::passeur;
 
 pub const OPTIONS_FR: [&str; 14] = [
-	"Entrer une nouvelle transaction",
-	"Afficher tous les comptes",
-	"Ajouter un compte",
-	"Supprimer un compte",
-	"Afficher toutes les catégories",
-	"Ajouter une catégorie",
-	"Supprimer une catégorie",
-	"Afficher toutes les favorites",
-	"Ajouter une transaction favorite",
-	"Modifier une transaction favorite",
-	"Supprimer une transaction favorite",
-	"Interroger les transactions",
-	"Accès complet à la bd [PRO ONLY]",
-	"Sommaire de comptes",
+	"1- Entrer une nouvelle transaction",
+	"2- Afficher tous les comptes",
+	"3- Ajouter un compte",
+	"4- Supprimer un compte",
+	"5- Afficher toutes les catégories",
+	"6- Ajouter une catégorie",
+	"7- Supprimer une catégorie",
+	"8- Afficher toutes les favorites",
+	"9- Ajouter une transaction favorite",
+	"a- Modifier une transaction favorite",
+	"b- Supprimer une transaction favorite",
+	"c- Interroger les transactions",
+	"d- Accès complet à la bd [PRO ONLY]",
+	"e- Sommaire de comptes",
 ];
 
 pub const OPTIONS_ES: [&str; 14] = [
-	"Ingresar una nueva transacción",
-	"Mostrar todas las cuentas",
-	"Agregar una cuenta",
-	"Eliminar una cuenta",
-	"Mostrar todas las categorías",
-	"Agregar una categoría",
-	"Eliminar una categoría",
-	"Mostrar todos los favoritos",
-	"Agregar una transacción favorita",
-	"Modificar una transacción favorita",
-	"Eliminar una transacción favorita",
-	"Consultar transacciones",
-	"Acceso completo a la base de datos [SOLO PRO]",
-	"Resumen de cuentas",
+	"1- Ingresar una nueva transacción",
+	"2- Mostrar todas las cuentas",
+	"3- Agregar una cuenta",
+	"4- Eliminar una cuenta",
+	"5- Mostrar todas las categorías",
+	"6- Agregar una categoría",
+	"7- Eliminar una categoría",
+	"8- Mostrar todos los favoritos",
+	"9- Agregar una transacción favorita",
+	"a- Modificar una transacción favorita",
+	"b- Eliminar una transacción favorita",
+	"c- Consultar transacciones",
+	"d- Acceso completo a la base de datos [SOLO PRO]",
+	"e- Resumen de cuentas",
 ];
 
 pub const OPTIONS_EN: [&str; 14] = [
-	"Enter a new transaction",
-	"Show all accounts",
-	"Add an account",
-	"Delete an account",
-	"Show all categories",
-	"Add a category",
-	"Delete a category",
-	"Show all favorites",
-	"Add a favorite transaction",
-	"Edit a favorite transaction",
-	"Delete a favorite transaction",
-	"Query transactions",
-	"Full DB access [PRO ONLY]",
-	"Account summary",
+	"1- Enter a new transaction",
+	"2- Show all accounts",
+	"3- Add an account",
+	"4- Delete an account",
+	"5- Show all categories",
+	"6- Add a category",
+	"7- Delete a category",
+	"8- Show all favorites",
+	"9- Add a favorite transaction",
+	"a- Edit a favorite transaction",
+	"b- Delete a favorite transaction",
+	"c- Query transactions",
+	"d- Full DB access [PRO ONLY]",
+	"e- Account summary",
 ];
 
 pub struct MenuStrings {
@@ -95,7 +95,7 @@ fn reposition_cursor_and_clear(lines: usize) {
 	io::stdout().flush().unwrap();
 }
 
-pub fn affiche_menu(var_app: &VarsApp, livre: &mut LivreComptable) {
+pub fn affiche_menu(var_app: &mut VarsApp, livre: &mut LivreComptable) {
 	let mut selected = 0;
 
 	let language = match var_app.loc_string.as_str() {
@@ -121,9 +121,9 @@ pub fn affiche_menu(var_app: &VarsApp, livre: &mut LivreComptable) {
 		println!("--------------------------------------------------------");
 		for (i, option) in language.options.iter().enumerate() {
 			if i == selected {
-				println!("==> {:>2}- {}", i + 1, option);
+				println!("===> {}", option);
 			} else {
-				println!("    {:>2}- {}", i + 1, option);
+				println!("     {}", option);
 			}
 		}
 		println!("--------------------------------------------------------");
@@ -154,7 +154,7 @@ pub fn affiche_menu(var_app: &VarsApp, livre: &mut LivreComptable) {
 			[10] | [13] => { // Entrée
 				mode_brute_off();
 				io::stdout().flush().unwrap();
-				if !passeur(selected, &var_app, livre) {
+				if !passeur(selected, var_app, livre) {
 					eprintln!("{}", language.err_majeure);
 					break;
 				}
@@ -167,7 +167,28 @@ pub fn affiche_menu(var_app: &VarsApp, livre: &mut LivreComptable) {
 				println!("{}", language.aurevoir);
 				break;
 			}	// Quitter
-
+			[b] if (b'1'..=b'9').contains(b) => {
+				mode_brute_off();
+				io::stdout().flush().unwrap();
+				selected = (b - 49) as usize;
+				if !passeur(selected, var_app, livre) {
+					eprintln!("{}", language.err_majeure);
+					break;
+				}
+				mode_brute_on();
+				dessine_menu(selected);
+			}
+			[l] if (b'a'..=b'e').contains(l) => {
+				mode_brute_off();
+				io::stdout().flush().unwrap();
+				selected = (l - 88) as usize;
+				if !passeur(selected, var_app, livre) {
+					eprintln!("{}", language.err_majeure);
+					break;
+				}
+				mode_brute_on();
+				dessine_menu(selected);
+			}
 			_ => {}
 		}
 	}

@@ -33,7 +33,7 @@ pub const LANG_EN: MenuFonctionsStrings = MenuFonctionsStrings {
 
 // ###########################################################################
 
-pub fn passeur(menu_no: usize, app_vars: &VarsApp, livre: &mut LivreComptable) -> bool {
+pub fn passeur(menu_no: usize, app_vars: &mut VarsApp, livre: &mut LivreComptable) -> bool {
 
 	let language = match app_vars.loc_string.as_str() {
 		"fr" => LANG_FR,
@@ -42,6 +42,8 @@ pub fn passeur(menu_no: usize, app_vars: &VarsApp, livre: &mut LivreComptable) -
 	};
 	println!("\n--------------------------------------------------------");
 	match menu_no {
+		0 => { return livre.new_trans(app_vars, false); },
+
 		1 => livre.imp_comptes(&livre.COMPTES),
 
 		2 => { println!("{}", language.create_compte);			// Ajouter un compte
@@ -91,6 +93,8 @@ pub fn passeur(menu_no: usize, app_vars: &VarsApp, livre: &mut LivreComptable) -
 		6 => { return livre.supp_categorie(); },
 
 		7 => livre.printTransactions(&livre.FAVORITES, true),
+
+		8 => { return livre.new_trans(app_vars, true); },
 
 		10 => { return livre.supp_favorite(); },
 
