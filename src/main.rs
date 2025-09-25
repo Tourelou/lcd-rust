@@ -17,7 +17,7 @@ use parse::VarsApp;
 
 const DEFAUT_PRGNAME: &str = "lcd";
 const DEFAUT_LIVRE: &str = "LivreComptable";
-const VERSION: &str = "2025-09-19";
+const VERSION: &str = "2025-09-24";
 
 /// Retourne la largeur du terminal en colonnes.
 /// Si la détection échoue, retourne 0 silencieusement.

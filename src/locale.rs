@@ -118,7 +118,7 @@ pub const LANG_FR: LangStrings = LangStrings {
 	err_read_file: "Erreur lors de la lecture du fichier:",
 	header: HEADER_FR,
 	new_db: "n'existe pas.\n\nCréation d'un nouveau livre ?",
-	ouverture: "Ouverture du livre «{1}» à partir du répertoire «{2}»",
+	ouverture: "Ouverture du livre «{1}»\nDu répertoire «{2}»",
 };
 
 pub const LANG_ES: LangStrings = LangStrings {
@@ -136,7 +136,7 @@ pub const LANG_ES: LangStrings = LangStrings {
 	err_read_file: "Error al leer el archivo:",
 	header: HEADER_ES,
 	new_db: "no existe.\n\n¿Creando un nuevo libro?",
-	ouverture: "Abriendo el libro «{1}» desde el directorio «{2}»",
+	ouverture: "Abriendo el libro «{1}»\nDesde el directorio «{2}»",
 };
 
 pub const LANG_EN: LangStrings = LangStrings {
@@ -154,7 +154,7 @@ pub const LANG_EN: LangStrings = LangStrings {
 	err_read_file: "Error reading the file:",
 	header: HEADER_EN,
 	new_db: "does not exist.\n\nCreating a new book ?",
-	ouverture: "Opening book «{1}» from directory «{2}»",
+	ouverture: "Opening book «{1}»\nFrom directory «{2}»",
 };
 
 pub fn set_lang_vec() -> (String, LangStrings) {

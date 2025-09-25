@@ -17,7 +17,6 @@ pub struct Readline {
 	history: Vec<String>,
 }
 
-#[allow(unused)]
 impl Readline {
 	pub fn new() -> Self {
 		unsafe { rl_initialize(); }	// nécessaire sur macOS avec libedit
@@ -54,9 +53,5 @@ impl Readline {
 				}
 			}
 		}
-	}
-
-	pub fn get_history(&self) -> &Vec<String> {
-		&self.history
 	}
 }

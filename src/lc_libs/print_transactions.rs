@@ -33,24 +33,28 @@ pub const TRANS_TYPE_EN: [&str; 6] = [
 
 pub struct TransactionStrings {
 	trans_type: &'static [&'static str],
+	aucune_trans: &'static str,
 	de_str: &'static str,
 	vers_str: &'static str,
 }
 
 pub const LANG_FR: TransactionStrings = TransactionStrings {
 	trans_type: &TRANS_TYPE_FR,
+	aucune_trans: "Aucune transaction à afficher.",
 	de_str: "De  :",
 	vers_str: "Vers:",
 };
 
 pub const LANG_ES: TransactionStrings = TransactionStrings {
 	trans_type: &TRANS_TYPE_ES,
+	aucune_trans: "No hay transacciones para mostrar.",
 	de_str: "De  :",
 	vers_str: "Para:",
 };
 
 pub const LANG_EN: TransactionStrings = TransactionStrings {
 	trans_type: &TRANS_TYPE_EN,
+	aucune_trans: "No transactions to display.",
 	de_str: "From:",
 	vers_str: "To  :",
 };
@@ -65,12 +69,16 @@ impl LivreComptable {
 	}
 
 	pub fn printTransactions(&self, trans: &Vec<Transaction>, count: bool) {
-		if trans.len() > 0 {
 		let language = match self.abrev_langue.as_str() {
 			"fr" => LANG_FR,
 			"es" => LANG_ES,
 			_ => LANG_EN,
 		};
+		if trans.is_empty() {
+			println!("{}", language.aucune_trans);
+			return;
+		}
+
 		let bottom = trans.len();
 			if count {
 				for (i, t) in trans.iter().enumerate() {
@@ -126,6 +134,5 @@ impl LivreComptable {
 					}
 				}
 			}
-		}
 	}
 }

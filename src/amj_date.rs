@@ -3,7 +3,6 @@ use std::fmt;
 
 use crate::locale::LangStrings;
 
-#[allow(unused)]
 pub struct AMJDate {
 	annee: u32,
 	mois: u32,
@@ -133,7 +132,6 @@ impl AMJDate {
 		j >= 1 && j <= ndjs[m - 1]
 	}
 
-#[allow(unused)]
 	pub fn set_check_date(&mut self, date: &str) -> bool {
 		let mut s = match date.len() {
 			10 => date.to_string(),

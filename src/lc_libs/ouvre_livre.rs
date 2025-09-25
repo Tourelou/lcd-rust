@@ -211,25 +211,6 @@ impl LivreComptable {
 				Err(e) => eprintln!("{e}")
 			};
 		}
-		// for cmpt in &lc.COMPTES {
-		// 	println!("Nom: {} - Ref: {} - Type: {} - Départ: ${} - Présent: ${}",
-		// 			cmpt.nom, cmpt.cmpt_ref, cmpt.cmpt_type, cent_2_string(cmpt.depart), cent_2_string(cmpt.present));
-		// }
-
-		// println!("{:#?}", lc.CATEGORIES);
-		//  for c in &lc.CATEGORIES {
-		//  	println!("Nom: {} - Utilisé: {} - Type: {}", c.nom, c.utilise, c.cat_type);
-		//  }
-
-		// for t in &lc.TRANSACTIONS {
-		// 	println!("Date: {} - Description: {} - Type: {} - Compte: {} - Catégorie: {} - Montant: {}",
-		// 				t.date, t.description, t.t_type, t.compte, t.categorie, t.montant);
-		// }
-
-		// for f in &lc.FAVORITES {
-		// 	println!("Date: {} - Description: {} - Type: {} - Compte: {} - Catégorie: {} - Montant: {}",
-		// 				f.date, f.description, f.t_type, f.compte, f.categorie, f.montant);
-		// }
 		menus::affiche_menu(var_app, &mut lc);
 		Ok(())
 	}

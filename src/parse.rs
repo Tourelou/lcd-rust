@@ -12,7 +12,6 @@ pub enum ParseResult {
 	SystemError(),
 }
 
-#[allow(unused)]
 // #[derive(Debug)]
 pub struct VarsApp {
 	pub date: AMJDate,

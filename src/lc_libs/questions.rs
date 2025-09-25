@@ -63,6 +63,7 @@ To chain filters:         AND
 pub struct QuestionsStrings {
 	pub quest_options: &'static str,
 	pub quest_input: &'static str,
+	pub aucune_trans: &'static str,
 	pub sommaire: &'static str,
 	pub sql_input: &'static str,
 	pub reponse_sql: &'static str,
@@ -71,6 +72,7 @@ pub struct QuestionsStrings {
 pub const LANG_FR: QuestionsStrings = QuestionsStrings {
 	quest_options: QUEST_TRANS_FR,
 	quest_input: "====> Votre requête: ",
+	aucune_trans: "Aucune transaction ne correspond.",
 	sommaire: "│ Crédit      │ Débit       │ Virement    │",
 	sql_input: "Entrez une requête SQL: ",
 	reponse_sql: "---------- Réponse ----------",
@@ -79,6 +81,7 @@ pub const LANG_FR: QuestionsStrings = QuestionsStrings {
 pub const LANG_ES: QuestionsStrings = QuestionsStrings {
 	quest_options: QUEST_TRANS_ES,
 	quest_input: "====> Tu pregunta: ",
+	aucune_trans: "No hay transacciones que coincidan.",
 	sommaire: "│ Crédito     │ Débito      │ Transf.     │",
 	sql_input: "Introduzca una consulta SQL: ",
 	reponse_sql: "---------- Respuesta ----------",
@@ -87,6 +90,7 @@ pub const LANG_ES: QuestionsStrings = QuestionsStrings {
 pub const LANG_EN: QuestionsStrings = QuestionsStrings {
 	quest_options: QUEST_TRANS_EN,
 	quest_input: "====> Your query: ",
+	aucune_trans: "No matching transactions.",
 	sommaire: "│ Credit      │ Debit       │ Transfer    │",
 	sql_input: "Enter an SQL query: ",
 	reponse_sql: "---------- Answer ----------",
@@ -153,7 +157,10 @@ impl LivreComptable {
 			}
 			Err(e) => eprintln!("{e}"),
 		}
-		if self.TMP_TRANSACTIONS.is_empty() { return true; }
+		if self.TMP_TRANSACTIONS.is_empty() {
+			println!("{}", language.aucune_trans);
+			return true;
+		}
 		else {
 			self.printTransactions(&self.TMP_TRANSACTIONS, false);
 			println!("                                                            ╭─────────────┬─────────────┬─────────────╮");

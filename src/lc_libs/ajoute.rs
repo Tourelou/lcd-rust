@@ -124,9 +124,9 @@ impl LivreComptable {
 			depart: depart,
 			present: depart,
 		};
-		println!("{:#?}", reponse);
 
 		Some(reponse)
+
 	}
 
 	pub fn ajoute_categorie(&mut self) -> Option<Categorie> {
@@ -155,7 +155,7 @@ impl LivreComptable {
 			utilise: 0,
 			cat_type,
 		};
-		println!("{:#?}", reponse);
+
 		Some(reponse)
 
 	}

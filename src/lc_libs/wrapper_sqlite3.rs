@@ -138,7 +138,6 @@ impl Drop for Connection {
 				if rc != SQLITE_OK {
 					eprintln!("sqlite3 error: Error closing database (code: {})", rc);
 				}
-				else { println!("Base de données fermée correctement."); }
 			}
 		}
 	}
