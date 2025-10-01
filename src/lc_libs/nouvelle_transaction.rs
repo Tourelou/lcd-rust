@@ -164,10 +164,12 @@ impl LivreComptable {
 				break;
 			};
 		}
+		// Pour éviter une erreur SQL quand la description contient une apostrophe.
+		let description_db = t.description.replace("'", "''");
 		if favorite {
 			let requete_sql = 
 			format!("INSERT INTO Favorites(Date, Description, Type, Compte, Catégorie, Montant) VALUES('{}', '{}', '{}', '{}', '{}', {})",
-											t.date, t.description, t.t_type, t.compte, t.categorie, t.montant);
+											t.date, description_db, t.t_type, t.compte, t.categorie, t.montant);
 			match self.bd.exec(requete_sql.as_str()){
 				Ok(_) => self.FAVORITES.push(t.clone()),
 				Err(e) => {
@@ -179,7 +181,7 @@ impl LivreComptable {
 		else {
 			let requete_sql = 
 			format!("INSERT INTO Transactions(Date, Description, Type, Compte, Catégorie, Montant) VALUES('{}', '{}', '{}', '{}', '{}', {})",
-											t.date, t.description, t.t_type, t.compte, t.categorie, t.montant);
+											t.date, description_db, t.t_type, t.compte, t.categorie, t.montant);
 			match self.bd.exec(requete_sql.as_str()){
 				Ok(_) => self.TRANSACTIONS.push(t.clone()),
 				Err(e) => {
