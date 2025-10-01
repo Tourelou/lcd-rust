@@ -192,7 +192,7 @@ impl LivreComptable {
 	//	###########  Calcul des montants en bd et en mémoire  ###########
 
 			let mut i_compte = self.COMPTES.iter().position(|c| c.nom == t.compte).unwrap();
-			let i_cat = self.CATEGORIES.iter().position(|c| c.nom == t.compte).unwrap();
+			let i_cat = self.CATEGORIES.iter().position(|c| c.nom == t.categorie).unwrap();
 
 			if t.t_type == "Dépôt" || t.t_type == "Crédit" {
 				if self.COMPTES[i_compte].cmpt_type == "Crédit" {
