@@ -65,21 +65,21 @@ pub struct MenuStrings {
 
 pub const LANG_FR: MenuStrings = MenuStrings {
 	options: &OPTIONS_FR,
-	menu_usage: "Choisir un item avec les flèches haut/bas puis enter ⏎\n --- « 0 » pour quitter",
+	menu_usage: "Choisir un item avec les flèches haut/bas puis enter ⏎\n --- « 0 | q | Q » pour quitter",
 	err_majeure: "Erreur majeur - Sortie du programme.",
 	aurevoir: "À la prochaine ...",
 };
 
 pub const LANG_ES: MenuStrings = MenuStrings {
 	options: &OPTIONS_ES,
-	menu_usage: "Seleccione un elemento con las flechas arriba/abajo y luego ingrese ⏎\n --- « 0 » para salir",
+	menu_usage: "Seleccione un elemento con las flechas arriba/abajo y luego ingrese ⏎\n --- « 0 | q | Q » para salir",
 	err_majeure: "Error mayor: salida del programa",
 	aurevoir: "¡Hasta la próxima!...",
 };
 
 pub const LANG_EN: MenuStrings = MenuStrings {
 	options: &OPTIONS_EN,
-	menu_usage: "Select an item with the up/down arrows then enter ⏎\n --- « 0 » to exit",
+	menu_usage: "Select an item with the up/down arrows then enter ⏎\n --- « 0 | q | Q » to exit",
 	err_majeure: "Major Error - Program Exit.",
 	aurevoir: "See you next time...",
 };
@@ -161,16 +161,18 @@ pub fn affiche_menu(var_app: &mut VarsApp, livre: &mut LivreComptable) {
 				mode_brute_on();
 				dessine_menu(selected);
 			}
-			[b'0'] => {
+			[b'0'] | [b'q'] | [b'Q'] => {
 				// Rétablissement du mode normal du terminal
 				mode_brute_off();
 				println!("{}", language.aurevoir);
 				break;
 			}	// Quitter
 			[b] if (b'1'..=b'9').contains(b) => {
+				selected = (b - 49) as usize;
+				reposition_cursor_and_clear(language.options.len() + 3);
+				dessine_menu(selected);
 				mode_brute_off();
 				io::stdout().flush().unwrap();
-				selected = (b - 49) as usize;
 				if !passeur(selected, var_app, livre) {
 					eprintln!("{}", language.err_majeure);
 					break;
@@ -179,9 +181,11 @@ pub fn affiche_menu(var_app: &mut VarsApp, livre: &mut LivreComptable) {
 				dessine_menu(selected);
 			}
 			[l] if (b'a'..=b'e').contains(l) => {
+				selected = (l - 88) as usize;
+				reposition_cursor_and_clear(language.options.len() + 3);
+				dessine_menu(selected);
 				mode_brute_off();
 				io::stdout().flush().unwrap();
-				selected = (l - 88) as usize;
 				if !passeur(selected, var_app, livre) {
 					eprintln!("{}", language.err_majeure);
 					break;
