@@ -3,18 +3,18 @@
 const  TYPE_COMPTE_FR: &str =
 "Type de compte|Compte courant|Compte épargne|Carte de crédit|Votre choix";
 const  TYPE_CATEGORIE_FR: &str =
-"Type de catégorie|En entrée ex.: Paye|En Sortie ex.: Nourriture|Votre choix";
+"Type de catégorie|Revenu - En entrée|Dépense - En sortie|Votre choix";
 
 const TYPE_COMPTE_ES: &str =
 "Tipo de cuenta|Cuenta corriente|Cuenta de ahorros|Tarjeta de crédito|Su elección";
-const TYPE_CATEGORIE_ES: &str =
-"Tipo de categoría|Ingreso ej.: Sueldo|Gasto ej.: Comida|Su elección";
+const TYPE_CATEGORIE_ES: &str = 
+"Tipo de categoría|Ingreso - Entrada|Gasto - Salida|Su elección";
 
 const TYPE_COMPTE_EN: &str =
 "Account type|Checking account|Savings account|Credit card|Your choice";
-const TYPE_CATEGORIE_EN: &str =
-"Category type|Income e.g.: Salary|Expense e.g.: Food|Your choice";
 
+const TYPE_CATEGORIE_EN: &str = 
+"Category type|Income - Incoming|Expense - Outgoing|Your choice";
 
 #[derive(Debug)]
 pub struct AjouteString {

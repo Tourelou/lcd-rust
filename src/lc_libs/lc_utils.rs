@@ -1,23 +1,23 @@
 // lc_utils.rs
 
-use std::process::Command;
+// use std::process::Command;
 
-pub fn enable_raw_mode() {
-	// Sauvegarde les paramètres actuels du terminal
-	let _ = Command::new("stty")
-						.arg("-echo")
-						.arg("raw")
-						.status();
-}
+// pub fn enable_raw_mode() {
+// 	// Sauvegarde les paramètres actuels du terminal
+// 	let _ = Command::new("stty")
+// 						.arg("-echo")
+// 						.arg("raw")
+// 						.status();
+// }
 
-pub fn disable_raw_mode() {
-	// Restaure les paramètres du terminal
-	let _ =	Command::new("stty")
-						.arg("echo")
-						.arg("-raw")
-						.status()
-						.expect("Échec de la désactivation du mode brut");
-}
+// pub fn disable_raw_mode() {
+// 	// Restaure les paramètres du terminal
+// 	let _ =	Command::new("stty")
+// 						.arg("echo")
+// 						.arg("-raw")
+// 						.status()
+// 						.expect("Échec de la désactivation du mode brut");
+// }
 
 pub fn string_2_cent(valeur: &String) -> Option<i64> {
 

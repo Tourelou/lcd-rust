@@ -1,0 +1,1 @@
+RUSTFLAGS="-L /usr/local/opt/readline/lib -L /usr/local/opt/sqlite3/lib" cargo build --profile release-optsize

@@ -3,11 +3,34 @@
 use super::LivreComptable;
 use super::ajoute_locale;
 use super::lc_utils::string_2_cent;
-use super::lc_utils::enable_raw_mode;
-use super::lc_utils::disable_raw_mode;
 use super::{Categorie, Compte};
 
-use std::io::{self, Read, Write};
+use std::io::{self, Write};
+
+
+fn get_index(max_len: usize) -> usize {
+	// Demande à l'usager quelle ligne traiter.
+	let mut input = String::new();
+
+	// 1. Lire la saisie
+	io::stdin()
+		.read_line(&mut input)
+		.expect(format!("{}", "err_keyboard").as_str());
+
+	// 2. Tenter de convertir en nombre (usize est idéal pour les index)
+	match input.trim().parse::<usize>() {
+		Ok(index) => {
+			if index > max_len { 
+				println!("{}", "err_index_too_big");
+				return 0;
+			}
+			else { return index; }
+		}
+		Err(_) => { return 0; }
+	}
+}
+
+
 
 fn get_menu(chaine: &str, index: u8) -> Option<String>{
 	// index sert à différencier si c'est pour Compte ou Catégorie
@@ -20,56 +43,48 @@ fn get_menu(chaine: &str, index: u8) -> Option<String>{
 	}
 	print!("        {:<16}    : ", elements[elements.len()-1]);
 	io::stdout().flush().unwrap();
-	enable_raw_mode();
-	let mut buffer = [0; 1]; // Lire un seul octet
+	let mut reponse: usize; // Lire un seul octet
 	if index == 0 {			// index 0 pour les paramètres d'un compte
 		loop {
-			io::stdin().read_exact(&mut buffer).unwrap();
-			match buffer[0] {
-				b'0' => {
-					disable_raw_mode();
+			reponse = get_index(3);
+			match reponse {
+				0 => {
 					println!("Ok, exit");
 					return None;
 				}
-				b'1' => {
-					disable_raw_mode();
-					println!("{}", elements[1]);
+				1 => {
+					println!("{:30}{}","", elements[1]);
 					return Some(String::from("Courant"));
 				}
-				b'2' => {
-					disable_raw_mode();
-					println!("{}", elements[2]);
+				2 => {
+					println!("{:30}{}","", elements[2]);
 					return Some(String::from("Épargne"));
 				}
-				b'3' => {
-					disable_raw_mode();
-					println!("{}", elements[3]);
+				3 => {
+					println!("{:30}{}","", elements[3]);
 					return Some(String::from("Crédit"));
 				}
-				_ => {}
+				_ => { println!("Ici peut-être"); }
 			}
 		}
 	}
 	if index == 1 {			// index 0 pour les paramètres d'une catégorie
 		loop {
-			io::stdin().read_exact(&mut buffer).unwrap();
-			match buffer[0] {
-				b'0' => {
-					disable_raw_mode();
+			reponse = get_index(3);
+			match reponse {
+				0 => {
 					println!("Ok, exit");
 					return None;
 				}
-				b'1' => {
-					disable_raw_mode();
-					println!("{}", elements[1]);
+				1 => {
+					println!("{:30}{}","", elements[1]);
 					return Some(String::from("IN"));
 				}
-				b'2' => {
-					disable_raw_mode();
-					println!("{}", elements[2]);
+				2 => {
+					println!("{:30}{}","", elements[2]);
 					return Some(String::from("OUT"));
 				}
-				_ => {}
+				_ => { println!("Ici peut-être"); }
 			}
 		}
 	}
@@ -141,9 +156,13 @@ impl LivreComptable {
 										format!("{}", language.nom_categorie).as_str(),
 										false) {
 			Some(line) => line,
-			None => return None,
+			None => {
+				println!("Cat1 sans nom");
+				return None},
 		};
-		if nom == "" { return None; }
+		if nom == "" {
+			println!("Cat2 sans nom");
+			return None; }
 
 		let cat_type = match get_menu(language.type_categorie, 1) {
 			Some(line) => line,
