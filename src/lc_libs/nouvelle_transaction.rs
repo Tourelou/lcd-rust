@@ -53,10 +53,8 @@ impl LivreComptable {
 
 		let prompt = if favorite { language.desc_favorite }
 		else { language.desc_transaction };
-		print!("{}", prompt);
-		io::stdout().flush().unwrap();
 
-		let reponse = self.run_context("sans-histoire", "", false).unwrap_or_default();
+		let reponse = self.run_context("sans-histoire", prompt, false).unwrap_or_default();
 		if reponse.is_empty() || reponse == "0" {
 			println!("{}", language.trans_annulee);
 			return true;
