@@ -95,7 +95,7 @@ impl LivreComptable {
 				let _ = remove_file(var_app.livre_name.as_ref().unwrap());
 				return Err(format!("{}", language.exit_no_categorie));
 			}
-			
+
 			//	##################
 			lc.bd.exec(
 				"CREATE TABLE IF NOT EXISTS Transactions (
@@ -205,7 +205,36 @@ impl LivreComptable {
 								_ => {}
 							}
 						}
-						lc.FAVORITES.push(lc_libs::Transaction {date, description, t_type, compte, categorie, montant});
+						let transaction = lc_libs::Transaction { date, description,
+															t_type, compte, categorie, montant };
+
+						// --- DEBUT DE LA VALIDATION ---
+						let mut erreurs = Vec::new();
+
+						if !lc.COMPTES.iter().any(|c| c.nom == transaction.compte) {
+							erreurs.push(format!("{}", language.not_in_compte.replace("{1}", &transaction.compte)));
+						}
+						if !lc.CATEGORIES.iter().any(|cat| cat.nom == transaction.categorie) {
+							erreurs.push(format!("{}", language.not_in_categorie.replace("{1}", &transaction.categorie)));
+						}
+
+						if erreurs.is_empty() { lc.FAVORITES.push(transaction); }
+						else {
+							// Ça cloche : on affiche tout ce qu'on a ramassé
+							eprintln!("{}", language.alerte_load_favorite);
+							lc.print1Transaction(&transaction);
+
+							for err in erreurs { eprintln!("===> {err}"); }
+							eprintln!("{}", language.fav_tran_delete.replace("{1}", var_app.livre_name.as_ref().unwrap()));
+
+							let query = format!("DELETE FROM Favorites WHERE Description = \"{}\" AND Montant = {}",
+												transaction.description, transaction.montant);
+
+							if let Err(e) = lc.bd.exec(&query.as_str()) {
+								eprintln!("Erreur lors de la suppression : {e}");
+							}
+						}
+						// --- FIN DE LA VALIDATION ---
 					}
 				},
 				Err(e) => eprintln!("{e}")
@@ -215,3 +244,5 @@ impl LivreComptable {
 		Ok(())
 	}
 }
+
+
