@@ -1,0 +1,1 @@
+RUSTFLAGS="-L /opt/homebrew/Cellar/readline/8.3.3/lib -L /opt/homebrew/Cellar/sqlite/3.53.3/lib" cargo build --profile release-optsize

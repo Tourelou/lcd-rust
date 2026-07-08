@@ -151,8 +151,10 @@ impl LivreComptable {
 		};
 
 		let fav_choisi = &mut self.FAVORITES[choix as usize];
+		// Pour éviter une erreur SQL quand la description contient une apostrophe.
+		let description_db = fav_choisi.description.replace("'", "''");
 		let sql = format!("UPDATE Favorites SET Montant = {} WHERE Description = '{}'",
-															montant, fav_choisi.description);
+															montant, description_db);
 		match self.bd.exec(&sql) {
 			Ok(_) => {
 				fav_choisi.montant = montant ;
